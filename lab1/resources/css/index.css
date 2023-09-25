@@ -1,0 +1,56 @@
+body {
+    background-color: #3e2f43;
+    margin: 0px;
+    padding: 0px;
+}
+
+header {
+    justify-content: right;
+    flex-wrap: wrap; 
+    padding-top: 5px;
+    width: 100%;
+    background-color: #0300126d;
+    margin-bottom: 10px;
+}
+
+.many_cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    align-content: flex-start;
+}
+
+.search {
+    display: flex;
+    margin-left: 20px;
+    margin-top: 10px;
+}
+
+.search-input {
+    padding: 2px;
+    width: 65%;
+    margin-right: 5px;
+    font-size: 13px;
+}
+
+.submit-button {
+    width: 70px;
+    font-weight: 400;
+    font-size: 15px;
+    background-color: #fafafa;
+    color: #2788f7;
+    padding: 4px;
+    text-align: center;
+    border: 1px solid #2788f7;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submit-button:hover {
+    border: 1px solid #2788f7;
+    background-color: #2788f7;
+    color: #fff;
+}
