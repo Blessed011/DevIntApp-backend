@@ -1,0 +1,17 @@
+<head>
+    <link href="/styles/card_details.css" rel="stylesheet" type="text/css">
+</head>
+<div class="card-details">
+    <div class="card-details__image">
+        <img src="../image/{{ .Image }}" alt="Фотография модуля" />
+    </div>
+    <div class="card-details__info">
+        <h2 class="card-details__title">{{ .Title }}</h2>
+        <hr>
+        <p class="card-details__description">{{ .Description }}</p>
+        <p class="card__mass">Масса: {{ .Mass }}</p>
+        <p class="card__length">Длина: {{ .Length }}</p>
+        <p class="card__diameter">Диаметр: {{ .Diameter }}</p>
+        <p class="card__launch_date">Дата запуска: {{ .LaunchDate }}</p>
+    </div>
+</div>
