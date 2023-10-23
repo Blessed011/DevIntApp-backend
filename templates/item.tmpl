@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <link href="/css/item.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <h1 style = "text-align:center">Подробная информация</h1>
+<p>
+<div>
+<section class="articles">
+  <article>
+    <div class="article-wrapper">
+        <img src="/image/{{.ImageURL}}" alt="" />
+      <div class="article-body">
+        <h2>{{.Name}}</h2>
+        <div>
+          <b>Описание:</b>  {{.Description}}
+        </div>
+        <div>
+          <b>Масса:</b>  {{.Mass}}
+        </div>
+        <div>
+          <b>Диаметр:</b>  {{.Diameter}}
+        </div>
+        <div>
+          <b>Длина:</b>  {{.Length}}
+        </div>
+        <div>
+        {{if .IsDeleted}}
+                <b style = "color:#ff0000">Модуль удален</b>
+            {{end}}
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+</div>
+</body>
+</html>

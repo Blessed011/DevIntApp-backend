@@ -1,24 +1,42 @@
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="en" >
 <head>
-    <link href="/styles/index.css" rel="stylesheet" type="text/css">
-    <link href="/styles/product-card.css" rel="stylesheet" type="text/css">
+  <meta charset="UTF-8">
+  <link href="/css/product_card.css" rel="stylesheet" type="text/css">
 </head>
-
-<header>
-    <div class="search">
-        <form action="/search" method="get">
-            <input value="{{.searchName}}" class="search-input" type="text" name="moduleName" placeholder="Поиск...">
-            <input type="submit" class="submit-button" value="Найти">
-        </form>
-    </div>
-</header>
-
 <body>
-    <div class="many_cards">
-        {{ range $index, $card := .modules }}
-            {{template "product-card.tmpl" .}}
-        {{ end }}
+  <h1>Список модулей</h1>
+<p>
+<form action="/modules" method="get">
+    <input type="text" name="name" value="{{if ne .Name ""}}{{.Name}}{{end}}" placeholder="Введите название">
+    <button type="submit" class = "button-7">Фильтровать</button>
+</p>
+</form>
+
+<section class="articles">
+{{range $key, $value := .Modules}}
+  <article>
+    <div class="article-wrapper">
+      
+        <img src=/image/{{$value.ImageURL}} alt="" />
+      
+      <div class="article-body">
+        <h2>{{$value.Name}}</h2>
+        {{if not .IsDeleted}}
+        <form action="/modules" method="post">
+                        <input type="hidden" name="delete" value="{{.ModuleID}}">
+                        <input type="submit" value="Удалить" class="button-7" style="width: 100%;">
+                    </form>
+        {{end}}
+        <p> </p>
+        <a href="/modules/{{$value.ModuleID}}" class="button-7" style = "width:100%;">
+          Подробнее 
+        </a>
+      </div>
+      
     </div>
+  </article>
+  {{end}}
+</section>
 </body>
 </html>

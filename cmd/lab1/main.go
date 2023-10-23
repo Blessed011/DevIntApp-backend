@@ -1,12 +1,15 @@
 package main
 
 import (
-	"lab1/internal/api"
+	"lab1/internal/pkg/app"
 	"log"
 )
 
 func main() {
-	log.Println("Application start!")
-	api.StartServer()
-	log.Println("Application terminated!")
+	app, err := app.New()
+	if err != nil {
+		log.Println("app can not be created", err)
+		return
+	}
+	app.Run()
 }
