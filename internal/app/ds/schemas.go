@@ -24,6 +24,9 @@ type Mission struct {
 	DateStartMission time.Time `gorm:"type:date"`
 	Status           string    `gorm:"type:varchar(30)"`
 	Description      string    `gorm:"type:text"`
+
+	Moderator User `gorm:"foreignkey:ModeratorID"`
+	Customer  User `gorm:"foreignkey:CustomerID"`
 }
 
 type User struct {
