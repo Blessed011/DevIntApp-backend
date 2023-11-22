@@ -252,7 +252,7 @@ func (app *Application) AddToMission(c *gin.Context) {
 }
 
 func (app *Application) GetAllMissions(c *gin.Context) {
-	var request schemes.GetAllMissionsRequst
+	var request schemes.GetAllMissionsRequest
 	if err := c.ShouldBindQuery(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return

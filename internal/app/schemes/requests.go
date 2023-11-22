@@ -36,7 +36,7 @@ type AddToMissionRequest struct {
 	ModuleId string `uri:"module_id" binding:"required,uuid"`
 }
 
-type GetAllMissionsRequst struct {
+type GetAllMissionsRequest struct {
 	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02"`
 	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02"`
 	Status           string     `form:"status"`

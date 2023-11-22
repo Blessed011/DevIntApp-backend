@@ -39,7 +39,7 @@ func (app *Application) Run() {
 	// Заявки - миссии
 	r.GET("/missions", app.GetAllMissions)                                            // Список (отфильтровать по дате формирования и статусу)
 	r.GET("/missions/:mission_id", app.GetMission)                                    // Одна заявка
-	r.PUT("/missions/:mission_id/update", app.UpdateMission)                          // Изменение (добавление транспорта)
+	r.PUT("/missions/:mission_id/update", app.UpdateMission)                          // Изменение (добавление)
 	r.DELETE("/missions/:mission_id", app.DeleteMission)                              //Удаление
 	r.DELETE("/missions/:mission_id/delete_module/:module_id", app.DeleteFromMission) // Изменение (удаление услуг)
 	r.PUT("/missions/:mission_id/user_confirm", app.UserConfirm)                      // Сформировать создателем
