@@ -43,7 +43,7 @@ func (app *Application) Run() {
 	r.DELETE("/missions/:mission_id", app.DeleteMission)                              //Удаление
 	r.DELETE("/missions/:mission_id/delete_module/:module_id", app.DeleteFromMission) // Изменение (удаление услуг)
 	r.PUT("/missions/:mission_id/user_confirm", app.UserConfirm)                      // Сформировать создателем
-	r.PUT("missions/:mission_id/moderator_confirm", app.ModeratorConfirm)             // Завершить отклонить модератором
+	r.PUT("/missions/:mission_id/moderator_confirm", app.ModeratorConfirm)            // Завершить отклонить модератором
 
 	r.Static("/image", "../../resources/images")
 	r.Static("/css", "../../static/css")

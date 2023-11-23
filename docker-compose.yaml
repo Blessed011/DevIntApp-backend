@@ -13,8 +13,8 @@ x-minio-common: &minio-common
   # остальные ноды это поймут и будут предпринимать действия чтобы сохранить файлы
   command: server --console-address ":9001" http://minio{1...4}/data{1...2} 
   environment: # env конфигурация, подробнее: https://github.com/KaymeKaydex/web-2022/tree/go-lab2/tutorials/lab2/golang#поговорим-про-переменные-окружения
-    MINIO_ACCESS_KEY: minio # пароль админа
-    MINIO_SECRET_KEY: minio124 # логин админа
+    MINIO_ACCESS_KEY: minio # логин админа
+    MINIO_SECRET_KEY: minio124 # пароль админа
   expose:
     - "9000" # открыть порты
     - "9001"

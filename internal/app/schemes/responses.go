@@ -47,6 +47,7 @@ type MissionOutput struct {
 func ConvertMission(mission *ds.Mission) MissionOutput {
 	output := MissionOutput{
 		UUID:             mission.UUID,
+		Name:             mission.Name,
 		Status:           mission.Status,
 		DateCreated:      mission.DateCreated.Format("2006-01-02"),
 		Description:      mission.Description,

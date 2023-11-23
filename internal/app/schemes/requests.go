@@ -50,7 +50,7 @@ type UpdateMissionRequest struct {
 	URI struct {
 		MissionId string `uri:"mission_id" binding:"required,uuid"`
 	}
-	Description string `form:"description" json:"description" binding:"required,max=50"`
+	Description string `form:"description" json:"description" binding:"required,max=100"`
 }
 
 type DeleteFromMissionRequest struct {
