@@ -44,7 +44,7 @@ func (r *Repository) GetDraftMission(customerId string) (*ds.Mission, error) {
 	mission := &ds.Mission{}
 	err := r.db.First(mission, ds.Mission{Status: ds.DRAFT, CustomerId: customerId}).Error
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err

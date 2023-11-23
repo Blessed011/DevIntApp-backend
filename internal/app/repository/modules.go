@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"log"
 	"strings"
 
 	"gorm.io/gorm"
@@ -22,6 +23,8 @@ func (r *Repository) GetModuleByID(id string) (*ds.Module, error) {
 }
 
 func (r *Repository) AddModule(module *ds.Module) error {
+	log.Println(module)
+	log.Println(module.Name)
 	err := r.db.Create(&module).Error
 	if err != nil {
 		return err

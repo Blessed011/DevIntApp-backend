@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"time"
@@ -128,6 +129,8 @@ func (app *Application) AddModule(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
+
+	log.Println(request)
 
 	module := ds.Module(request.Module)
 	if err := app.repo.AddModule(&module); err != nil {
