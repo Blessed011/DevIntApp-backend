@@ -318,6 +318,8 @@ func (app *Application) UpdateMission(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
+	mission.Name = request.Name
+	mission.DateStartMission = *request.DateStartMission
 	mission.Description = request.Description
 	if app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

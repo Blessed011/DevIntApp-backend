@@ -50,7 +50,9 @@ type UpdateMissionRequest struct {
 	URI struct {
 		MissionId string `uri:"mission_id" binding:"required,uuid"`
 	}
-	Description string `form:"description" json:"description" binding:"required,max=100"`
+	Name             string     `form:"name" json:"name" binding:"required,max=50"`
+	DateStartMission *time.Time `form:"date_start_mission" json:"date_start_mission" time_format:"2006-01-02"`
+	Description      string     `form:"description" json:"description" binding:"required,max=100"`
 }
 
 type DeleteFromMissionRequest struct {
