@@ -12,29 +12,20 @@ import (
 
 func (r *Repository) GetAllMissions(dateApproveStart, dateApproveEnd *time.Time, status string) ([]ds.Mission, error) {
 	var missions []ds.Mission
-	var err error
 
+	query := r.db.Preload("Customer").Preload("Moderator").
+		Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
+		Where("status != ?", ds.DELETED).
+		Where("status != ?", ds.DRAFT)
 	if dateApproveStart != nil && dateApproveEnd != nil {
-		err = r.db.Preload("Customer").Preload("Moderator").
-			Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-			Where("date_approve BETWEEN ? AND ?", *dateApproveStart, *dateApproveEnd).
-			Find(&missions).Error
+		query = query.Where("date_approve BETWEEN ? AND ?", *dateApproveStart, *dateApproveEnd)
 	} else if dateApproveStart != nil {
-		err = r.db.Preload("Customer").Preload("Moderator").
-			Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-			Where("date_approve >= ?", *dateApproveStart).
-			Find(&missions).Error
+		query = query.Where("date_approve >= ?", *dateApproveStart)
 	} else if dateApproveEnd != nil {
-		err = r.db.Preload("Customer").Preload("Moderator").
-			Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-			Where("date_approve <= ?", *dateApproveEnd).
-			Find(&missions).Error
-	} else {
-		err = r.db.Preload("Customer").Preload("Moderator").
-			Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-			Find(&missions).Error
+		query = query.Where("date_approve <= ?", *dateApproveEnd)
 	}
-	if err != nil {
+
+	if err := query.Find(&missions).Error; err != nil {
 		return nil, err
 	}
 	return missions, nil
