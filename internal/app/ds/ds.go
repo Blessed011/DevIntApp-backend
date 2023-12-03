@@ -24,9 +24,9 @@ type Module struct {
 type Mission struct {
 	UUID             string     `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
 	Name             string     `gorm:"type:varchar(50);not null"`
-	DateCreated      time.Time  `gorm:"type:date;not null;default:current_date"`
-	DateApprove      *time.Time `gorm:"type:date"`
-	DateEnd          *time.Time `gorm:"type:date"`
+	DateCreated      time.Time  `gorm:"type:timestamp;not null"`
+	DateApprove      *time.Time `gorm:"type:timestamp"`
+	DateEnd          *time.Time `gorm:"type:timestamp"`
 	DateStartMission time.Time  `gorm:"type:date"`
 	Status           string     `gorm:"type:varchar(30)"`
 	Description      string     `gorm:"type:text"`

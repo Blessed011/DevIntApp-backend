@@ -49,19 +49,19 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 		UUID:             mission.UUID,
 		Name:             mission.Name,
 		Status:           mission.Status,
-		DateCreated:      mission.DateCreated.Format("2006-01-02"),
+		DateCreated:      mission.DateCreated.Format("2006-01-02 15:04:05"),
 		Description:      mission.Description,
 		DateStartMission: mission.DateStartMission.Format("2006-01-02"),
 		Customer:         mission.Customer.Name,
 	}
 
 	if mission.DateApprove != nil {
-		dateApprove := mission.DateApprove.Format("2006-01-02")
+		dateApprove := mission.DateApprove.Format("2006-01-02 15:04:05")
 		output.DateApprove = &dateApprove
 	}
 
 	if mission.DateEnd != nil {
-		dateEnd := mission.DateEnd.Format("2006-01-02")
+		dateEnd := mission.DateEnd.Format("2006-01-02 15:04:05")
 		output.DateEnd = &dateEnd
 	}
 
