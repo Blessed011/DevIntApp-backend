@@ -1,54 +1,81 @@
 package app
 
 import (
-	"lab1/internal/app/config"
-	"lab1/internal/app/dsn"
-	"lab1/internal/app/repository"
-
-	"net/http"
+	"fmt"
+	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 
-	"log"
-	"time"
+	"lab1/internal/app/config"
+	"lab1/internal/app/dsn"
+	"lab1/internal/app/redis"
+	"lab1/internal/app/repository"
+	"lab1/internal/app/role"
+
+	_ "lab1/docs"
+
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 type Application struct {
 	repo        *repository.Repository
 	minioClient *minio.Client
 	config      *config.Config
+	redisClient *redis.Client
 }
 
 func (app *Application) Run() {
+	log.Println("Server start up")
 
 	r := gin.Default()
-	//r.LoadHTMLGlob("../../templates/*")
 
 	r.Use(ErrorHandler())
 
-	// Услуги - модули
-	r.GET("/modules", app.GetAllModules)                           // Список с поиском
-	r.GET("/modules/:module_id", app.GetModule)                    // Одна услуга
-	r.DELETE("/modules/:module_id", app.DeleteModule)              // Удаление
-	r.PUT("/modules/:module_id", app.ChangeModule)                 // Изменение
-	r.POST("/modules", app.AddModule)                              // Добавление
-	r.POST("/modules/:module_id/add_to_mission", app.AddToMission) // Добавление в заявку
+	api := r.Group("/api")
+	{
+		// Услуги (модули)
+		modules := api.Group("/modules")
+		{
+			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllMissions)       // Список с поиском
+			modules.GET("/:module_id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetModule) // Одна услуга
+			modules.DELETE("/:module_id", app.WithAuthCheck(role.Moderator), app.DeleteModule)                              // Удаление
+			modules.PUT("/:module_id", app.WithAuthCheck(role.Moderator), app.ChangeModule)                                 // Изменение
+			modules.POST("", app.WithAuthCheck(role.Moderator), app.AddModule)                                              // Добавление
+			modules.POST("/:module_id/add_to_mission", app.WithAuthCheck(role.Customer, role.Moderator), app.AddToMission)  // Добавление в заявку
+		}
+		// Заявки (миссии)
+		missions := api.Group("/missions")
+		{
+			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                            // Список (отфильтровать по дате формирования и статусу)
+			missions.GET("/:mission_id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                                    // Одна заявка
+			missions.PUT("/:mission_id/update", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                          // Изменение (добавление транспорта)
+			missions.DELETE("/:mission_id", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                             //Удаление
+			missions.DELETE("/:mission_id/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
+			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                  // Сформировать создателем
+			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                           // Завершить отклонить модератором
+		}
+		// Пользователи (авторизация)
+		user := api.Group("/user")
+		{
+			user.POST("/sign_up", app.Register)
+			user.POST("/login", app.Login)
+			user.POST("/logout", app.Logout)
+		}
+	}
 
-	// Заявки - миссии
-	r.GET("/missions", app.GetAllMissions)                                            // Список (отфильтровать по дате формирования и статусу)
-	r.GET("/missions/:mission_id", app.GetMission)                                    // Одна заявка
-	r.PUT("/missions/:mission_id/update", app.UpdateMission)                          // Изменение (добавление)
-	r.DELETE("/missions/:mission_id", app.DeleteMission)                              //Удаление
-	r.DELETE("/missions/:mission_id/delete_module/:module_id", app.DeleteFromMission) // Изменение (удаление услуг)
-	r.PUT("/missions/:mission_id/user_confirm", app.UserConfirm)                      // Сформировать создателем
-	r.PUT("/missions/:mission_id/moderator_confirm", app.ModeratorConfirm)            // Завершить отклонить модератором
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	r.Static("/image", "../../resources/images")
-	r.Static("/css", "../../static/css")
-	r.Run("localhost:8081")
+	r.Run(fmt.Sprintf("%s:%d", app.config.ServiceHost, app.config.ServicePort))
+
 	log.Println("Server down")
+}
+
+func ErrorHandler() {
+	panic("unimplemented")
 }
 
 func New() (*Application, error) {
@@ -66,7 +93,7 @@ func New() (*Application, error) {
 		return nil, err
 	}
 
-	app.minioClient, err = minio.New(app.config.MinioEndpoint, &minio.Options{
+	app.minioClient, err = minio.New(app.config.Minio.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4("", "", ""),
 		Secure: false,
 	})
@@ -74,28 +101,10 @@ func New() (*Application, error) {
 		return nil, err
 	}
 
-	return &app, nil
-}
-
-func ErrorHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		for _, err := range c.Errors {
-			log.Println(err.Err)
-		}
-		lastError := c.Errors.Last()
-		if lastError != nil {
-			switch c.Writer.Status() {
-			case http.StatusBadRequest:
-				c.JSON(-1, gin.H{"error": "wrong request"})
-			case http.StatusNotFound:
-				c.JSON(-1, gin.H{"error": lastError.Error()})
-			case http.StatusMethodNotAllowed:
-				c.JSON(-1, gin.H{"error": lastError.Error()})
-			default:
-				c.Status(-1)
-			}
-		}
+	app.redisClient, err = redis.New(app.config.Redis)
+	if err != nil {
+		return nil, err
 	}
+
+	return &app, nil
 }
