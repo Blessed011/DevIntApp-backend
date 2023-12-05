@@ -24,7 +24,7 @@ type AllMissionsResponse struct {
 }
 
 type MissionResponse struct {
-	Mission MissionOutput `json:"mission"`
+	Mission MissionOutput `json:"missions"`
 	Modules []ds.Module   `json:"modules"`
 }
 
@@ -50,24 +50,24 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 		UUID:             mission.UUID,
 		Name:             mission.Name,
 		Status:           mission.Status,
-		DateCreated:      mission.DateCreated.Format("2006-01-02"),
+		DateCreated:      mission.DateCreated.Format("2006-01-02 15:04:05"),
 		Description:      mission.Description,
 		DateStartMission: mission.DateStartMission.Format("2006-01-02"),
-		Customer:         mission.Customer.Name,
+		Customer:         mission.Customer.Login,
 	}
 
 	if mission.DateApprove != nil {
-		dateApprove := mission.DateApprove.Format("2006-01-02")
+		dateApprove := mission.DateApprove.Format("2006-01-02 15:04:05")
 		output.DateApprove = &dateApprove
 	}
 
 	if mission.DateEnd != nil {
-		dateEnd := mission.DateEnd.Format("2006-01-02")
+		dateEnd := mission.DateEnd.Format("2006-01-02 15:04:05")
 		output.DateEnd = &dateEnd
 	}
 
 	if mission.Moderator != nil {
-		output.Moderator = &mission.Moderator.Name
+		output.Moderator = &mission.Moderator.Login
 	}
 
 	return output

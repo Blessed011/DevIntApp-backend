@@ -1,6 +1,7 @@
 package ds
 
 import (
+	"lab1/internal/app/role"
 	"time"
 )
 
@@ -38,11 +39,10 @@ type Mission struct {
 }
 
 type User struct {
-	UUID      string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
-	Name      string `gorm:"type:varchar(50)" json:"name"`
-	Login     string `gorm:"size:30;not null" json:"-"`
-	Password  string `gorm:"size:30;not null" json:"-"`
-	Moderator bool   `gorm:"type:bool;not null" json:"-"`
+	UUID     string    `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
+	Role     role.Role `sql:"type:string;"`
+	Login    string    `gorm:"size:30;not null" json:"login"`
+	Password string    `gorm:"size:30;not null" json:"-"`
 }
 
 type Flight struct {

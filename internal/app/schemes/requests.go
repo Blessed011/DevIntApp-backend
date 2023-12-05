@@ -2,7 +2,6 @@ package schemes
 
 import (
 	"lab1/internal/app/ds"
-
 	"mime/multipart"
 	"time"
 )
@@ -11,15 +10,13 @@ type ModuleRequest struct {
 	ModuleId string `uri:"module_id" binding:"required,uuid"`
 }
 
-// вопрос
 type GetAllModulesRequest struct {
-	Name string `form:"name"`
+	ModuleName string `form:"name"`
 }
 
-// вопрос
 type AddModuleRequest struct {
 	ds.Module
-	Image *multipart.FileHeader `form:"image" json:"image" binding:"required"`
+	Image *multipart.FileHeader `form:"image" json:"image"`
 }
 
 type ChangeModuleRequest struct {
@@ -37,9 +34,9 @@ type AddToMissionRequest struct {
 }
 
 type GetAllMissionsRequest struct {
-	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02"`
-	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02"`
-	Status           string     `form:"status"`
+	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02 15:04:05"`
+	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02 15:04:05"`
+	Status           string     `form:"status" json:"status"`
 }
 
 type MissionRequest struct {
@@ -61,14 +58,14 @@ type DeleteFromMissionRequest struct {
 }
 
 type UserConfirmRequest struct {
-	MissionId string `uri:"mission_id" binding:"required,uuid"`
+	Confirm bool `form:"confirm" binding:"required"`
 }
 
 type ModeratorConfirmRequest struct {
 	URI struct {
 		MissionId string `uri:"mission_id" binding:"required,uuid"`
 	}
-	Status string `form:"status" json:"status" binding:"required"`
+	Confirm bool `form:"confirm" binding:"required"`
 }
 
 type LoginReq struct {

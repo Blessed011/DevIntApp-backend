@@ -2,12 +2,11 @@ package repository
 
 import (
 	"errors"
-	"log"
 	"strings"
 
-	"gorm.io/gorm"
-
 	"lab1/internal/app/ds"
+
+	"gorm.io/gorm"
 )
 
 func (r *Repository) GetModuleByID(id string) (*ds.Module, error) {
@@ -23,8 +22,6 @@ func (r *Repository) GetModuleByID(id string) (*ds.Module, error) {
 }
 
 func (r *Repository) AddModule(module *ds.Module) error {
-	log.Println(module)
-	log.Println(module.Name)
 	err := r.db.Create(&module).Error
 	if err != nil {
 		return err
@@ -32,17 +29,15 @@ func (r *Repository) AddModule(module *ds.Module) error {
 	return nil
 }
 
-func (r *Repository) GetModuleByName(name string) ([]ds.Module, error) {
+func (r *Repository) GetModulesByName(moduleName string) ([]ds.Module, error) {
 	var modules []ds.Module
 
-	err := r.db.
-		Where("LOWER(modules.name) LIKE ?", "%"+strings.ToLower(name)+"%").Where("is_deleted = ?", false).
+	err := r.db.Where("LOWER(modules.name) LIKE ?", "%"+strings.ToLower(moduleName)+"%").
+		Where("is_deleted = ?", false).
 		Find(&modules).Error
-
 	if err != nil {
 		return nil, err
 	}
-
 	return modules, nil
 }
 

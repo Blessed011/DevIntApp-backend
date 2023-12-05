@@ -52,7 +52,7 @@ func (app *Application) Run() {
 		{
 			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                            // Список (отфильтровать по дате формирования и статусу)
 			missions.GET("/:mission_id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                                    // Одна заявка
-			missions.PUT("/:mission_id/update", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                          // Изменение (добавление транспорта)
+			missions.PUT("/:mission_id/update", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                          // Изменение (добавление)
 			missions.DELETE("/:mission_id", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                             //Удаление
 			missions.DELETE("/:mission_id/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
 			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                  // Сформировать создателем
