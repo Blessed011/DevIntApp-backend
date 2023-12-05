@@ -1,0 +1,768 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "title": "Lunar Gateway",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:7070",
+    "basePath": "/",
+    "paths": {
+        "/api/missions": {
+            "get": {
+                "description": "Возвращает все миссии с фильтрацией по статусу и дате формирования",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Получить все миссии",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "статус перевозки",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "начальная дата формирования",
+                        "name": "date_approve_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "конечная дата формирвания",
+                        "name": "date_approve_end",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AllMissionsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/missions/user_confirm": {
+            "put": {
+                "description": "Сформировать или удалить миссию пользователем",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Сформировать миссию",
+                "parameters": [
+                    {
+                        "description": "подтвердить",
+                        "name": "confirm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/missions/{mission_id}": {
+            "get": {
+                "description": "Возвращает подробную информацию о миссии",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Получить одну миссию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id миссии",
+                        "name": "mission_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.MissionResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Позволяет изменить название, дату старта и описание миссии и возвращает обновлённые данные",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Указать название, дату старта и описание миссии",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id миссии",
+                        "name": "mission_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Название",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
+                        }
+                    },
+                    {
+                        "description": "Дата старта",
+                        "name": "date_start_mission",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
+                        }
+                    },
+                    {
+                        "description": "Описание",
+                        "name": "description",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.UpdateMissionResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет миссию по id",
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Удалить миссию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id миссии",
+                        "name": "mission_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/missions/{mission_id}/delete_module/{module_id}": {
+            "delete": {
+                "description": "Удалить модуль из миссии",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Удалить модуль из миссии",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id миссии",
+                        "name": "mission_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AllModulesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/missions/{mission_id}/moderator_confirm": {
+            "put": {
+                "description": "Подтвердить или отменить миссию модератором",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Подтвердить миссию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id миссии",
+                        "name": "mission_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "подтвердить",
+                        "name": "confirm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/modules": {
+            "get": {
+                "description": "Возвращает все доступные модули с опциональной фильтрацией по типу",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Получить все модули",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "название модуля для фильтрации",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.GetAllModulesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/modules/": {
+            "post": {
+                "description": "Добавить новый модуль",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Добавить модуль",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Изображение модуля",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Название",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Описание",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Масса",
+                        "name": "mass",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Длина",
+                        "name": "length",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Диаметр",
+                        "name": "diameter",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/modules/{module_id}": {
+            "get": {
+                "description": "Возвращает более подробную информацию об одном модуле",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Получить один модуль",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ds.Module"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Изменить данные полей о модуле",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Изменить модуль",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Изображение модуля",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Название",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Описание",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Масса",
+                        "name": "mass",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Длина",
+                        "name": "length",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Диаметр",
+                        "name": "diameter",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Удаляет модуль по id",
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Удалить модуль",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/modules/{module_id}/add_to_mission": {
+            "post": {
+                "description": "Добавить выбранный модуль в черновик миссии",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Модули"
+                ],
+                "summary": "Добавить в миссию",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AllModulesResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "Авторизует пользователя по логиню, паролю и отдаёт jwt токен для дальнейших запросов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Авторизация",
+                "parameters": [
+                    {
+                        "description": "login and password",
+                        "name": "user_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/user/loguot": {
+            "post": {
+                "description": "Выход из аккаунта",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Выйти из аккаунта",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/user/sign_up": {
+            "post": {
+                "description": "Регистрация нового пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Регистрация",
+                "parameters": [
+                    {
+                        "description": "login and password",
+                        "name": "user_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.RegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.RegisterResp"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "app.SwaggerUpdateMissionRequest": {
+            "type": "object",
+            "properties": {
+                "date_start_mission": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "ds.Module": {
+            "type": "object",
+            "required": [
+                "description",
+                "diameter",
+                "length",
+                "mass"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "diameter": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "length": {
+                    "type": "string"
+                },
+                "mass": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.AllMissionsResponse": {
+            "type": "object",
+            "properties": {
+                "missions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemes.MissionOutput"
+                    }
+                }
+            }
+        },
+        "schemes.AllModulesResponse": {
+            "type": "object",
+            "properties": {
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Module"
+                    }
+                }
+            }
+        },
+        "schemes.GetAllModulesResponse": {
+            "type": "object",
+            "properties": {
+                "draft_mission": {
+                    "$ref": "#/definitions/schemes.MissionShort"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Module"
+                    }
+                }
+            }
+        },
+        "schemes.LoginReq": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 30
+                }
+            }
+        },
+        "schemes.MissionOutput": {
+            "type": "object",
+            "properties": {
+                "customer": {
+                    "type": "string"
+                },
+                "date_approve": {
+                    "type": "string"
+                },
+                "date_created": {
+                    "type": "string"
+                },
+                "date_end": {
+                    "type": "string"
+                },
+                "date_start_mission": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "moderator": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.MissionResponse": {
+            "type": "object",
+            "properties": {
+                "missions": {
+                    "$ref": "#/definitions/schemes.MissionOutput"
+                },
+                "modules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Module"
+                    }
+                }
+            }
+        },
+        "schemes.MissionShort": {
+            "type": "object",
+            "properties": {
+                "module_count": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.RegisterReq": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 30
+                }
+            }
+        },
+        "schemes.RegisterResp": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "schemes.UpdateMissionResponse": {
+            "type": "object",
+            "properties": {
+                "missions": {
+                    "$ref": "#/definitions/schemes.MissionOutput"
+                }
+            }
+        }
+    }
+}

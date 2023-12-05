@@ -1,0 +1,511 @@
+basePath: /
+definitions:
+  app.SwaggerUpdateMissionRequest:
+    properties:
+      date_start_mission:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  ds.Module:
+    properties:
+      description:
+        type: string
+      diameter:
+        type: string
+      image_url:
+        type: string
+      length:
+        type: string
+      mass:
+        type: string
+      name:
+        type: string
+      uuid:
+        type: string
+    required:
+    - description
+    - diameter
+    - length
+    - mass
+    type: object
+  schemes.AllMissionsResponse:
+    properties:
+      missions:
+        items:
+          $ref: '#/definitions/schemes.MissionOutput'
+        type: array
+    type: object
+  schemes.AllModulesResponse:
+    properties:
+      modules:
+        items:
+          $ref: '#/definitions/ds.Module'
+        type: array
+    type: object
+  schemes.GetAllModulesResponse:
+    properties:
+      draft_mission:
+        $ref: '#/definitions/schemes.MissionShort'
+      modules:
+        items:
+          $ref: '#/definitions/ds.Module'
+        type: array
+    type: object
+  schemes.LoginReq:
+    properties:
+      login:
+        maxLength: 30
+        type: string
+      password:
+        maxLength: 30
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  schemes.MissionOutput:
+    properties:
+      customer:
+        type: string
+      date_approve:
+        type: string
+      date_created:
+        type: string
+      date_end:
+        type: string
+      date_start_mission:
+        type: string
+      description:
+        type: string
+      moderator:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+      uuid:
+        type: string
+    type: object
+  schemes.MissionResponse:
+    properties:
+      missions:
+        $ref: '#/definitions/schemes.MissionOutput'
+      modules:
+        items:
+          $ref: '#/definitions/ds.Module'
+        type: array
+    type: object
+  schemes.MissionShort:
+    properties:
+      module_count:
+        type: integer
+      uuid:
+        type: string
+    type: object
+  schemes.RegisterReq:
+    properties:
+      login:
+        maxLength: 30
+        type: string
+      password:
+        maxLength: 30
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  schemes.RegisterResp:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  schemes.UpdateMissionResponse:
+    properties:
+      missions:
+        $ref: '#/definitions/schemes.MissionOutput'
+    type: object
+host: 127.0.0.1:7070
+info:
+  contact: {}
+  title: Lunar Gateway
+  version: "1.0"
+paths:
+  /api/missions:
+    get:
+      description: Возвращает все миссии с фильтрацией по статусу и дате формирования
+      parameters:
+      - description: статус перевозки
+        in: query
+        name: status
+        type: string
+      - description: начальная дата формирования
+        in: query
+        name: date_approve_start
+        type: string
+      - description: конечная дата формирвания
+        in: query
+        name: date_approve_end
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllMissionsResponse'
+      summary: Получить все миссии
+      tags:
+      - Миссии
+  /api/missions/{mission_id}:
+    delete:
+      description: Удаляет миссию по id
+      parameters:
+      - description: id миссии
+        in: path
+        name: mission_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Удалить миссию
+      tags:
+      - Миссии
+    get:
+      description: Возвращает подробную информацию о миссии
+      parameters:
+      - description: id миссии
+        in: path
+        name: mission_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.MissionResponse'
+      summary: Получить одну миссию
+      tags:
+      - Миссии
+    put:
+      description: Позволяет изменить название, дату старта и описание миссии и возвращает
+        обновлённые данные
+      parameters:
+      - description: id миссии
+        in: path
+        name: mission_id
+        required: true
+        type: string
+      - description: Название
+        in: body
+        name: name
+        required: true
+        schema:
+          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
+      - description: Дата старта
+        in: body
+        name: date_start_mission
+        required: true
+        schema:
+          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
+      - description: Описание
+        in: body
+        name: description
+        required: true
+        schema:
+          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.UpdateMissionResponse'
+      summary: Указать название, дату старта и описание миссии
+      tags:
+      - Миссии
+  /api/missions/{mission_id}/delete_module/{module_id}:
+    delete:
+      description: Удалить модуль из миссии
+      parameters:
+      - description: id миссии
+        in: path
+        name: mission_id
+        required: true
+        type: string
+      - description: id модуля
+        in: path
+        name: module_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllModulesResponse'
+      summary: Удалить модуль из миссии
+      tags:
+      - Миссии
+  /api/missions/{mission_id}/moderator_confirm:
+    put:
+      description: Подтвердить или отменить миссию модератором
+      parameters:
+      - description: id миссии
+        in: path
+        name: mission_id
+        required: true
+        type: string
+      - description: подтвердить
+        in: body
+        name: confirm
+        required: true
+        schema:
+          type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Подтвердить миссию
+      tags:
+      - Миссии
+  /api/missions/user_confirm:
+    put:
+      description: Сформировать или удалить миссию пользователем
+      parameters:
+      - description: подтвердить
+        in: body
+        name: confirm
+        required: true
+        schema:
+          type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Сформировать миссию
+      tags:
+      - Миссии
+  /api/modules:
+    get:
+      description: Возвращает все доступные модули с опциональной фильтрацией по типу
+      parameters:
+      - description: название модуля для фильтрации
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.GetAllModulesResponse'
+      summary: Получить все модули
+      tags:
+      - Модули
+  /api/modules/:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Добавить новый модуль
+      parameters:
+      - description: Изображение модуля
+        in: formData
+        name: image
+        type: file
+      - description: Название
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Описание
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Масса
+        in: formData
+        name: mass
+        required: true
+        type: string
+      - description: Длина
+        in: formData
+        name: length
+        required: true
+        type: integer
+      - description: Диаметр
+        in: formData
+        name: diameter
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+      summary: Добавить модуль
+      tags:
+      - Модули
+  /api/modules/{module_id}:
+    delete:
+      description: Удаляет модуль по id
+      parameters:
+      - description: id модуля
+        in: path
+        name: module_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Удалить модуль
+      tags:
+      - Модули
+    get:
+      description: Возвращает более подробную информацию об одном модуле
+      parameters:
+      - description: id модуля
+        in: path
+        name: module_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.Module'
+      summary: Получить один модуль
+      tags:
+      - Модули
+    put:
+      consumes:
+      - multipart/form-data
+      description: Изменить данные полей о модуле
+      parameters:
+      - description: Идентификатор модуля
+        in: path
+        name: module_id
+        required: true
+        type: string
+      - description: Изображение модуля
+        in: formData
+        name: image
+        type: file
+      - description: Название
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Описание
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: Масса
+        in: formData
+        name: mass
+        required: true
+        type: string
+      - description: Длина
+        in: formData
+        name: length
+        required: true
+        type: integer
+      - description: Диаметр
+        in: formData
+        name: diameter
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Изменить модуль
+      tags:
+      - Модули
+  /api/modules/{module_id}/add_to_mission:
+    post:
+      description: Добавить выбранный модуль в черновик миссии
+      parameters:
+      - description: id модуля
+        in: path
+        name: module_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllModulesResponse'
+      summary: Добавить в миссию
+      tags:
+      - Модули
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя по логиню, паролю и отдаёт jwt токен для
+        дальнейших запросов
+      parameters:
+      - description: login and password
+        in: body
+        name: user_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Авторизация
+      tags:
+      - Авторизация
+  /api/user/loguot:
+    post:
+      consumes:
+      - application/json
+      description: Выход из аккаунта
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Выйти из аккаунта
+      tags:
+      - Авторизация
+  /api/user/sign_up:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя
+      parameters:
+      - description: login and password
+        in: body
+        name: user_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.RegisterResp'
+      summary: Регистрация
+      tags:
+      - Авторизация
+schemes:
+- http
+swagger: "2.0"

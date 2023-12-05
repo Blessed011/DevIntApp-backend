@@ -15,8 +15,6 @@ import (
 	"lab1/internal/app/repository"
 	"lab1/internal/app/role"
 
-	_ "lab1/docs"
-
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
@@ -72,10 +70,6 @@ func (app *Application) Run() {
 	r.Run(fmt.Sprintf("%s:%d", app.config.ServiceHost, app.config.ServicePort))
 
 	log.Println("Server down")
-}
-
-func ErrorHandler() {
-	panic("unimplemented")
 }
 
 func New() (*Application, error) {

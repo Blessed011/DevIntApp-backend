@@ -9,7 +9,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-const servicePrefix = "container_logistics."
+const servicePrefix = "lunar_gateway."
 
 type Client struct {
 	cfg    config.RedisConfig
