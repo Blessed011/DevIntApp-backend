@@ -41,8 +41,8 @@ type Mission struct {
 type User struct {
 	UUID     string    `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
 	Role     role.Role `sql:"type:string;"`
-	Login    string    `gorm:"size:30;not null" json:"login"`
-	Password string    `gorm:"size:30;not null" json:"-"`
+	Login    string    `gorm:"size:40;not null" json:"login"`
+	Password string    `gorm:"size:45;not null" json:"-"`
 }
 
 type Flight struct {

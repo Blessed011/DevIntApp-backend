@@ -215,12 +215,6 @@ func (app *Application) DeleteFromMission(c *gin.Context) {
 // @Success		200
 // @Router		/api/missions/user_confirm [put]
 func (app *Application) UserConfirm(c *gin.Context) {
-	var request schemes.UserConfirmRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
 	userId := getUserId(c)
 	mission, err := app.repo.GetDraftMission(userId)
 	if err != nil {
@@ -236,13 +230,9 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		return
 	}
 
-	if request.Confirm {
-		mission.Status = ds.FORMED
-		now := time.Now()
-		mission.DateApprove = &now
-	} else {
-		mission.Status = ds.DELETED
-	}
+	mission.Status = ds.FORMED
+	now := time.Now()
+	mission.DateApprove = &now
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

@@ -96,18 +96,15 @@ func (app *Application) Login(c *gin.Context) {
 
 	strToken, err := token.SignedString([]byte(JWTConfig.Token))
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("can't create str token"))
+		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("cant create str token"))
 		return
 	}
 
-	http.SetCookie(c.Writer, &http.Cookie{
-		Name:     "Authorization",
-		Value:    "Bearer " + strToken,
-		Expires:  time.Now().Add(JWTConfig.ExpiresIn),
-		HttpOnly: true,
+	c.JSON(http.StatusOK, schemes.LoginResp{
+		ExpiresIn:   JWTConfig.ExpiresIn,
+		AccessToken: strToken,
+		TokenType:   "Bearer",
 	})
-
-	c.Status(http.StatusOK)
 }
 
 // @Summary		Выйти из аккаунта

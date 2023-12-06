@@ -38,7 +38,7 @@ func (app *Application) Run() {
 		// Услуги (модули)
 		modules := api.Group("/modules")
 		{
-			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllMissions)       // Список с поиском
+			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllModules)        // Список с поиском
 			modules.GET("/:module_id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetModule) // Одна услуга
 			modules.DELETE("/:module_id", app.WithAuthCheck(role.Moderator), app.DeleteModule)                              // Удаление
 			modules.PUT("/:module_id", app.WithAuthCheck(role.Moderator), app.ChangeModule)                                 // Изменение
@@ -66,8 +66,8 @@ func (app *Application) Run() {
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	r.Run(fmt.Sprintf("%s:%d", app.config.ServiceHost, app.config.ServicePort))
+	log.Println("Host and Port: ", app.config.ServiceHost, app.config.ServicePort)
+	r.Run(fmt.Sprintf("localhost:8081"))
 
 	log.Println("Server down")
 }

@@ -127,7 +127,7 @@ definitions:
       missions:
         $ref: '#/definitions/schemes.MissionOutput'
     type: object
-host: 127.0.0.1:7070
+host: 127.0.0.1:8081
 info:
   contact: {}
   title: Lunar Gateway

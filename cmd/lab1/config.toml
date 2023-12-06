@@ -11,4 +11,4 @@ DialTimeout = "10s"
 ReadTimeout = "10s"
 
 ServiceHost = "localhost"
-ServicePort = 8082
+ServicePort = 8081

@@ -74,6 +74,7 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Println("SSSSSSS" + cfg.ServiceHost)
 	if os.Getenv("JWT_TOKEN") != "" {
 		cfg.JWT.Token = os.Getenv("JWT_TOKEN")
 	} else {
