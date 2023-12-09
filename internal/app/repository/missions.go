@@ -103,3 +103,14 @@ func (r *Repository) DeleteFromMission(missionId, moduleId string) error {
 	}
 	return nil
 }
+
+func (r *Repository) CountModules(missionId string) (int64, error) {
+	var count int64
+	err := r.db.Model(&ds.Flight{}).
+		Where("mission_id = ?", missionId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
