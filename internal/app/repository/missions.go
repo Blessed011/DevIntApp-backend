@@ -56,12 +56,14 @@ func (r *Repository) CreateDraftMission(customerId string) (*ds.Mission, error) 
 	return mission, nil
 }
 
-func (r *Repository) GetMissionById(missionId, userId string) (*ds.Mission, error) {
+func (r *Repository) GetMissionById(missionId string, userId *string) (*ds.Mission, error) {
 	mission := &ds.Mission{}
-	err := r.db.Preload("Moderator").Preload("Customer").
-		Where("status != ?", ds.DELETED).
-		Where("moderator_id = ? OR customer_id = ?", userId, userId).
-		First(mission, ds.Mission{UUID: missionId}).Error
+	query := r.db.Preload("Moderator").Preload("Customer").
+		Where("status != ?", ds.DELETED)
+	if userId != nil {
+		query = query.Where("customer_id = ?", userId)
+	}
+	err := query.First(mission, ds.Mission{UUID: missionId}).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

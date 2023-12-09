@@ -58,13 +58,20 @@ func (app *Application) GetAllMissions(c *gin.Context) {
 // @Router		/api/missions/{mission_id} [get]
 func (app *Application) GetMission(c *gin.Context) {
 	var request schemes.MissionRequest
+	var err error
 	if err := c.ShouldBindUri(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.MissionId, userId)
+	userRole := getUserRole(c)
+	var mission *ds.Mission
+	if userRole == role.Moderator {
+		mission, err = app.repo.GetMissionById(request.MissionId, nil)
+	} else {
+		mission, err = app.repo.GetMissionById(request.MissionId, &userId)
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -111,7 +118,7 @@ func (app *Application) UpdateMission(c *gin.Context) {
 	}
 
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.URI.MissionId, userId)
+	mission, err := app.repo.GetMissionById(request.URI.MissionId, &userId)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -139,19 +146,31 @@ func (app *Application) UpdateMission(c *gin.Context) {
 // @Router		/api/missions/{mission_id} [delete]
 func (app *Application) DeleteMission(c *gin.Context) {
 	var request schemes.MissionRequest
+	var err error
 	if err := c.ShouldBindUri(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.MissionId, userId)
+	userRole := getUserRole(c)
+	var mission *ds.Mission
+	if userRole == role.Moderator {
+		mission, err = app.repo.GetMissionById(request.MissionId, nil)
+	} else {
+		mission, err = app.repo.GetMissionById(request.MissionId, &userId)
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	if mission == nil {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
+		return
+	}
+
+	if userRole == role.Customer && mission.Status != ds.DRAFT {
+		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("миссия уже сформирована"))
 		return
 	}
 	mission.Status = ds.DELETED
@@ -173,13 +192,20 @@ func (app *Application) DeleteMission(c *gin.Context) {
 // @Router		/api/missions/{mission_id}/delete_module/{module_id} [delete]
 func (app *Application) DeleteFromMission(c *gin.Context) {
 	var request schemes.DeleteFromMissionRequest
+	var err error
 	if err := c.ShouldBindUri(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.MissionId, userId)
+	userRole := getUserRole(c)
+	var mission *ds.Mission
+	if userRole == role.Moderator {
+		mission, err = app.repo.GetMissionById(request.MissionId, nil)
+	} else {
+		mission, err = app.repo.GetMissionById(request.MissionId, &userId)
+	}
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -261,7 +287,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	}
 
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.URI.MissionId, userId)
+	mission, err := app.repo.GetMissionById(request.URI.MissionId, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
