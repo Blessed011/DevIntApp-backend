@@ -10,5 +10,6 @@ ExpiresIn = "1h"
 DialTimeout = "10s"
 ReadTimeout = "10s"
 
-ServiceHost = "localhost"
+ServiceHost = "127.0.0.1"
 ServicePort = 8081
+Token = "secret_token"

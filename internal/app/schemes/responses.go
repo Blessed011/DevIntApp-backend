@@ -43,6 +43,7 @@ type MissionOutput struct {
 	Description      string  `json:"description"`
 	Moderator        *string `json:"moderator"`
 	Customer         string  `json:"customer"`
+	FundingStatus    *string `json:"funding_status"`
 }
 
 func ConvertMission(mission *ds.Mission) MissionOutput {
@@ -53,6 +54,7 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 		DateCreated:      mission.DateCreated.Format("2006-01-02 15:04:05"),
 		Description:      mission.Description,
 		DateStartMission: mission.DateStartMission.Format("2006-01-02"),
+		FundingStatus:    mission.FundingStatus,
 		Customer:         mission.Customer.Login,
 	}
 

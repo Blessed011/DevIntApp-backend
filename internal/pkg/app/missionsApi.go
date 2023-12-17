@@ -238,7 +238,7 @@ func (app *Application) DeleteFromMission(c *gin.Context) {
 // @Description	Сформировать или удалить миссию пользователем
 // @Produce		json
 // @Param		confirm body boolean true "подтвердить"
-// @Success		200
+// @Success		200 {object} schemes.MissionOutput
 // @Router		/api/missions/user_confirm [put]
 func (app *Application) UserConfirm(c *gin.Context) {
 	userId := getUserId(c)
@@ -255,6 +255,13 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя сформировать миссию со статусом %s", mission.Status))
 		return
 	}
+	if err := fundingRequest(mission.UUID); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`funding is impossible: {%s}`, err))
+		return
+	}
+
+	fundingStatus := ds.FundingOnConsideration
+	mission.FundingStatus = &fundingStatus
 
 	mission.Status = ds.FORMED
 	now := time.Now()
@@ -264,7 +271,7 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, schemes.ConvertMission(mission))
 }
 
 // @Summary		Подтвердить миссию
@@ -309,6 +316,51 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		mission.Status = ds.REJECTED
 	}
 	mission.ModeratorId = &userId
+
+	if err := app.repo.SaveMission(mission); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.Status(http.StatusOK)
+}
+
+func (app *Application) Funding(c *gin.Context) {
+	var request schemes.FundingReq
+	if err := c.ShouldBindUri(&request.URI); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	if request.Token != app.config.Token {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	mission, err := app.repo.GetMissionById(request.URI.MissionId, nil)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if mission == nil {
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
+		return
+	}
+	if mission.Status != ds.FORMED || *mission.FundingStatus != ds.FundingOnConsideration {
+		c.AbortWithStatus(http.StatusMethodNotAllowed)
+		return
+	}
+
+	var fundingStatus string
+	if request.FundingStatus {
+		fundingStatus = ds.FundingApproved
+	} else {
+		fundingStatus = ds.FundingRejected
+	}
+	mission.FundingStatus = &fundingStatus
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

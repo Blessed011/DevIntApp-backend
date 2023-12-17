@@ -1,10 +1,11 @@
 package app
 
 import (
+	"bytes"
 	"fmt"
-	"path/filepath"
-
 	"mime/multipart"
+	"net/http"
+	"path/filepath"
 
 	"crypto/sha1"
 	"encoding/hex"
@@ -61,4 +62,18 @@ func generateHashString(s string) string {
 	h := sha1.New()
 	h.Write([]byte(s))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func fundingRequest(mission_id string) error {
+	url := "http://127.0.0.1:8082/"
+	payload := fmt.Sprintf(`{"mission_id": "%s"}`, mission_id)
+
+	resp, err := http.Post(url, "application/json", bytes.NewBufferString(payload))
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode >= 300 {
+		return fmt.Errorf(`funding failed with status: {%s}`, resp.Status)
+	}
+	return nil
 }

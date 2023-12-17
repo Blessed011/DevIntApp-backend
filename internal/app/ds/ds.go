@@ -11,6 +11,10 @@ const COMPELTED string = "завершён"
 const REJECTED string = "отклонён"
 const DELETED string = "удалён"
 
+const FundingApproved string = "финансирование одобрено"
+const FundingRejected string = "финансирование отклонено"
+const FundingOnConsideration string = "финансирование на рассмотрении"
+
 type Module struct {
 	UUID        string  `gorm:"type:uuid;primary_key;default:gen_random_uuid()"  json:"uuid" binding:"-"`
 	Name        string  `gorm:"type:varchar(50);not null" json:"name"`
@@ -33,16 +37,17 @@ type Mission struct {
 	Description      string     `gorm:"type:text"`
 	ModeratorId      *string    `json:"-"`
 	CustomerId       string     `gorm:not null`
+	FundingStatus    *string    `gorm:"size:40"`
 
 	Moderator *User
 	Customer  User
 }
 
 type User struct {
-	UUID     string    `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
-	Role     role.Role `sql:"type:string;"`
-	Login    string    `gorm:"size:40;not null" json:"login"`
-	Password string    `gorm:"size:45;not null" json:"-"`
+	UUID     string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
+	Role     role.Role
+	Login    string `gorm:"size:40;not null" json:"login"`
+	Password string `gorm:"size:45;not null" json:"-"`
 }
 
 type Flight struct {

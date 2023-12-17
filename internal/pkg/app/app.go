@@ -55,6 +55,7 @@ func (app *Application) Run() {
 			missions.DELETE("/:mission_id/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
 			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                  // Сформировать создателем
 			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                           // Завершить отклонить модератором
+			missions.PUT("/:mission_id/funding", app.Funding)
 		}
 		// Пользователи (авторизация)
 		user := api.Group("/user")

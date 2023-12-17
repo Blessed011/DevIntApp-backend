@@ -16,10 +16,10 @@ import (
 type Config struct {
 	ServiceHost string
 	ServicePort int
-
-	JWT   JWTConfig   `mapstructure:"jwt"`
-	Minio MinioConfig `mapstructure:"minio"`
-	Redis RedisConfig
+	Token       string
+	JWT         JWTConfig   `mapstructure:"jwt"`
+	Minio       MinioConfig `mapstructure:"minio"`
+	Redis       RedisConfig
 }
 
 type MinioConfig struct {

@@ -6,7 +6,7 @@ import (
 
 	// "log"
 
-	// "github.com/joho/godotenv"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,6 +15,7 @@ func main() {
 	// if err := godotenv.Load("../../.env"); err != nil {
 	// 	log.Print("No .env file found")
 	// }
+	_ = godotenv.Load()
 	db, err := gorm.Open(postgres.Open(dsn.FromEnv()), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
