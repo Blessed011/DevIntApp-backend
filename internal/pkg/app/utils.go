@@ -65,7 +65,7 @@ func generateHashString(s string) string {
 }
 
 func fundingRequest(mission_id string) error {
-	url := "http://127.0.0.1:8082/"
+	url := "http://localhost:8082/"
 	payload := fmt.Sprintf(`{"mission_id": "%s"}`, mission_id)
 
 	resp, err := http.Post(url, "application/json", bytes.NewBufferString(payload))

@@ -65,7 +65,7 @@ type ModeratorConfirmRequest struct {
 	URI struct {
 		MissionId string `uri:"mission_id" binding:"required,uuid"`
 	}
-	Confirm bool `form:"confirm" binding:"required"`
+	Confirm *bool `form:"confirm" binding:"required"`
 }
 
 type LoginReq struct {
@@ -82,6 +82,6 @@ type FundingReq struct {
 	URI struct {
 		MissionId string `uri:"mission_id" binding:"required,uuid"`
 	}
-	FundingStatus bool   `form:"funding_status" binding:"required"`
-	Token         string `form:"token" binding:"required"`
+	FundingStatus *bool  `json:"funding_status" form:"funding_status" binding:"required"`
+	Token         string `json:"token" form:"token" binding:"required"`
 }

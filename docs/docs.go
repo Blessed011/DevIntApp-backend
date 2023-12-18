@@ -78,7 +78,10 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.MissionOutput"
+                        }
                     }
                 }
             }
@@ -694,6 +697,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "funding_status": {
                     "type": "string"
                 },
                 "moderator": {

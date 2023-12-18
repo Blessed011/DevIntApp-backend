@@ -308,7 +308,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		return
 	}
 
-	if request.Confirm {
+	if *request.Confirm {
 		mission.Status = ds.COMPELTED
 		now := time.Now()
 		mission.DateEnd = &now
@@ -326,6 +326,8 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 
 func (app *Application) Funding(c *gin.Context) {
 	var request schemes.FundingReq
+	var Token = "secret_token"
+
 	if err := c.ShouldBindUri(&request.URI); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -335,7 +337,9 @@ func (app *Application) Funding(c *gin.Context) {
 		return
 	}
 
-	if request.Token != app.config.Token {
+	fmt.Println(request, app.config.Token)
+
+	if request.Token != Token {
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
@@ -349,13 +353,13 @@ func (app *Application) Funding(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	if mission.Status != ds.FORMED || *mission.FundingStatus != ds.FundingOnConsideration {
-		c.AbortWithStatus(http.StatusMethodNotAllowed)
-		return
-	}
+	// if mission.Status != ds.FORMED || *mission.FundingStatus != ds.FundingOnConsideration {
+	// 	c.AbortWithStatus(http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	var fundingStatus string
-	if request.FundingStatus {
+	if *request.FundingStatus {
 		fundingStatus = ds.FundingApproved
 	} else {
 		fundingStatus = ds.FundingRejected

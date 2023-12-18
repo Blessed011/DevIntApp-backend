@@ -80,6 +80,8 @@ definitions:
         type: string
       description:
         type: string
+      funding_status:
+        type: string
       moderator:
         type: string
       name:
@@ -291,6 +293,8 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/schemes.MissionOutput'
       summary: Сформировать миссию
       tags:
       - Миссии
