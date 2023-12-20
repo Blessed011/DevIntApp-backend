@@ -68,7 +68,7 @@ func (app *Application) Run() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	log.Println("Host and Port: ", app.config.ServiceHost, app.config.ServicePort)
-	r.Run(fmt.Sprintf("localhost:8081"))
+	r.Run(fmt.Sprintf("localhost:80"))
 
 	log.Println("Server down")
 }

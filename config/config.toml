@@ -11,5 +11,5 @@ DialTimeout = "10s"
 ReadTimeout = "10s"
 
 ServiceHost = "127.0.0.1"
-ServicePort = 8081
+ServicePort = 80
 Token = "secret_token"
