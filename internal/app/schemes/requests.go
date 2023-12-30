@@ -34,8 +34,8 @@ type AddToMissionRequest struct {
 }
 
 type GetAllMissionsRequest struct {
-	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02 15:04:05"`
-	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02 15:04:05"`
+	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02 15:04"`
+	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02 15:04"`
 	Status           string     `form:"status" json:"status"`
 }
 
@@ -44,21 +44,13 @@ type MissionRequest struct {
 }
 
 type UpdateMissionRequest struct {
-	URI struct {
-		MissionId string `uri:"mission_id" binding:"required,uuid"`
-	}
 	Name             string     `form:"name" json:"name" binding:"required,max=50"`
 	DateStartMission *time.Time `form:"date_start_mission" json:"date_start_mission" time_format:"2006-01-02"`
 	Description      string     `form:"description" json:"description" binding:"required,max=100"`
 }
 
 type DeleteFromMissionRequest struct {
-	MissionId string `uri:"mission_id" binding:"required,uuid"`
-	ModuleId  string `uri:"module_id" binding:"required,uuid"`
-}
-
-type UserConfirmRequest struct {
-	Confirm bool `form:"confirm" binding:"required"`
+	ModuleId string `uri:"module_id" binding:"required,uuid"`
 }
 
 type ModeratorConfirmRequest struct {

@@ -45,10 +45,17 @@ definitions:
           $ref: '#/definitions/ds.Module'
         type: array
     type: object
+  schemes.AuthResp:
+    properties:
+      access_token:
+        type: string
+      token_type:
+        type: string
+    type: object
   schemes.GetAllModulesResponse:
     properties:
       draft_mission:
-        $ref: '#/definitions/schemes.MissionShort'
+        type: string
       modules:
         items:
           $ref: '#/definitions/ds.Module'
@@ -100,13 +107,6 @@ definitions:
           $ref: '#/definitions/ds.Module'
         type: array
     type: object
-  schemes.MissionShort:
-    properties:
-      module_count:
-        type: integer
-      uuid:
-        type: string
-    type: object
   schemes.RegisterReq:
     properties:
       login:
@@ -118,11 +118,6 @@ definitions:
     required:
     - login
     - password
-    type: object
-  schemes.RegisterResp:
-    properties:
-      ok:
-        type: boolean
     type: object
   schemes.UpdateMissionResponse:
     properties:
@@ -161,21 +156,16 @@ paths:
       summary: Получить все миссии
       tags:
       - Миссии
-  /api/missions/{mission_id}:
+  /api/missions/:
     delete:
-      description: Удаляет миссию по id
-      parameters:
-      - description: id миссии
-        in: path
-        name: mission_id
-        required: true
-        type: string
+      description: Удаляет черновую миссию
       responses:
         "200":
           description: OK
-      summary: Удалить миссию
+      summary: Удалить черновую миссию
       tags:
       - Миссии
+  /api/missions/{mission_id}:
     get:
       description: Возвращает подробную информацию о миссии
       parameters:
@@ -231,30 +221,6 @@ paths:
       summary: Указать название, дату старта и описание миссии
       tags:
       - Миссии
-  /api/missions/{mission_id}/delete_module/{module_id}:
-    delete:
-      description: Удалить модуль из миссии
-      parameters:
-      - description: id миссии
-        in: path
-        name: mission_id
-        required: true
-        type: string
-      - description: id модуля
-        in: path
-        name: module_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemes.AllModulesResponse'
-      summary: Удалить модуль из миссии
-      tags:
-      - Миссии
   /api/missions/{mission_id}/moderator_confirm:
     put:
       description: Подтвердить или отменить миссию модератором
@@ -278,29 +244,37 @@ paths:
       summary: Подтвердить миссию
       tags:
       - Миссии
-  /api/missions/user_confirm:
-    put:
-      description: Сформировать или удалить миссию пользователем
+  /api/missions/delete_module/{module_id}:
+    delete:
+      description: Удалить модуль из черновой миссии
       parameters:
-      - description: подтвердить
-        in: body
-        name: confirm
+      - description: id модуля
+        in: path
+        name: module_id
         required: true
-        schema:
-          type: boolean
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemes.MissionOutput'
+            $ref: '#/definitions/schemes.AllModulesResponse'
+      summary: Удалить модуль из черновой миссии
+      tags:
+      - Миссии
+  /api/missions/user_confirm:
+    put:
+      description: Сформировать миссию пользователем
+      responses:
+        "200":
+          description: OK
       summary: Сформировать миссию
       tags:
       - Миссии
   /api/modules:
     get:
-      description: Возвращает все доступные модули с опциональной фильтрацией по типу
+      description: Возвращает все доступные модули с опциональной фильтрацией по названию
       parameters:
       - description: название модуля для фильтрации
         in: query
@@ -472,16 +446,16 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/schemes.AuthResp'
       summary: Авторизация
       tags:
       - Авторизация
-  /api/user/loguot:
-    post:
+  /api/user/logout:
+    get:
       consumes:
       - application/json
       description: Выход из аккаунта
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
@@ -500,13 +474,9 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/schemes.RegisterReq'
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/schemes.RegisterResp'
       summary: Регистрация
       tags:
       - Авторизация

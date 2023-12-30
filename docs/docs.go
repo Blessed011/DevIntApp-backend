@@ -55,33 +55,59 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/missions/user_confirm": {
-            "put": {
-                "description": "Сформировать или удалить миссию пользователем",
+        "/api/missions/": {
+            "delete": {
+                "description": "Удаляет черновую миссию",
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Удалить черновую миссию",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/missions/delete_module/{module_id}": {
+            "delete": {
+                "description": "Удалить модуль из черновой миссии",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Миссии"
                 ],
-                "summary": "Сформировать миссию",
+                "summary": "Удалить модуль из черновой миссии",
                 "parameters": [
                     {
-                        "description": "подтвердить",
-                        "name": "confirm",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "boolean"
-                        }
+                        "type": "string",
+                        "description": "id модуля",
+                        "name": "module_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemes.MissionOutput"
+                            "$ref": "#/definitions/schemes.AllModulesResponse"
                         }
+                    }
+                }
+            }
+        },
+        "/api/missions/user_confirm": {
+            "put": {
+                "description": "Сформировать миссию пользователем",
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Сформировать миссию",
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -167,63 +193,6 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "delete": {
-                "description": "Удаляет миссию по id",
-                "tags": [
-                    "Миссии"
-                ],
-                "summary": "Удалить миссию",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id миссии",
-                        "name": "mission_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/missions/{mission_id}/delete_module/{module_id}": {
-            "delete": {
-                "description": "Удалить модуль из миссии",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Миссии"
-                ],
-                "summary": "Удалить модуль из миссии",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id миссии",
-                        "name": "mission_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "id модуля",
-                        "name": "module_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.AllModulesResponse"
-                        }
-                    }
-                }
             }
         },
         "/api/missions/{mission_id}/moderator_confirm": {
@@ -263,7 +232,7 @@ const docTemplate = `{
         },
         "/api/modules": {
             "get": {
-                "description": "Возвращает все доступные модули с опциональной фильтрацией по типу",
+                "description": "Возвращает все доступные модули с опциональной фильтрацией по названию",
                 "produces": [
                     "application/json"
                 ],
@@ -518,18 +487,18 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AuthResp"
+                        }
                     }
                 }
             }
         },
-        "/api/user/loguot": {
-            "post": {
+        "/api/user/logout": {
+            "get": {
                 "description": "Выход из аккаунта",
                 "consumes": [
-                    "application/json"
-                ],
-                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -549,9 +518,6 @@ const docTemplate = `{
                 "consumes": [
                     "application/json"
                 ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Авторизация"
                 ],
@@ -569,10 +535,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.RegisterResp"
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -647,11 +610,22 @@ const docTemplate = `{
                 }
             }
         },
+        "schemes.AuthResp": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "token_type": {
+                    "type": "string"
+                }
+            }
+        },
         "schemes.GetAllModulesResponse": {
             "type": "object",
             "properties": {
                 "draft_mission": {
-                    "$ref": "#/definitions/schemes.MissionShort"
+                    "type": "string"
                 },
                 "modules": {
                     "type": "array",
@@ -730,17 +704,6 @@ const docTemplate = `{
                 }
             }
         },
-        "schemes.MissionShort": {
-            "type": "object",
-            "properties": {
-                "module_count": {
-                    "type": "integer"
-                },
-                "uuid": {
-                    "type": "string"
-                }
-            }
-        },
         "schemes.RegisterReq": {
             "type": "object",
             "required": [
@@ -755,14 +718,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 30
-                }
-            }
-        },
-        "schemes.RegisterResp": {
-            "type": "object",
-            "properties": {
-                "ok": {
-                    "type": "boolean"
                 }
             }
         },

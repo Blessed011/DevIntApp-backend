@@ -19,9 +19,8 @@ import (
 // @Tags		Авторизация
 // @Description	Регистрация нового пользователя
 // @Accept		json
-// @Produce		json
 // @Param		user_credentials body schemes.RegisterReq true "login and password"
-// @Success		200 {object} schemes.RegisterResp
+// @Success		200
 // @Router		/api/user/sign_up [post]
 func (app *Application) Register(c *gin.Context) {
 	request := &schemes.RegisterReq{}
@@ -30,28 +29,27 @@ func (app *Application) Register(c *gin.Context) {
 		return
 	}
 
-	if request.Password == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("password is empty"))
+	existing_user, err := app.repo.GetUserByLogin(request.Login)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if existing_user != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	if request.Login == "" {
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("login is empty"))
-		return
-	}
-
-	if err := app.repo.AddUser(&ds.User{
+	user := ds.User{
 		Role:     role.Customer,
 		Login:    request.Login,
 		Password: generateHashString(request.Password),
-	}); err != nil {
+	}
+	if err := app.repo.AddUser(&user); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, &schemes.RegisterResp{
-		Ok: true,
-	})
+	c.Status(http.StatusOK)
 }
 
 // @Summary		Авторизация
@@ -60,7 +58,7 @@ func (app *Application) Register(c *gin.Context) {
 // @Accept		json
 // @Produce		json
 // @Param		user_credentials body schemes.LoginReq true "login and password"
-// @Success		200
+// @Success		200 {object} schemes.AuthResp
 // @Router		/api/user/login [post]
 // @Consumes     json
 func (app *Application) Login(c *gin.Context) {
@@ -84,10 +82,10 @@ func (app *Application) Login(c *gin.Context) {
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(JWTConfig.ExpiresIn).Unix(),
 			IssuedAt:  time.Now().Unix(),
-			Issuer:    "bitop-admin",
 		},
 		UserUUID: user.UUID,
 		Role:     user.Role,
+		Login:    user.Login,
 	})
 	if token == nil {
 		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("token is nil"))
@@ -96,12 +94,11 @@ func (app *Application) Login(c *gin.Context) {
 
 	strToken, err := token.SignedString([]byte(JWTConfig.Token))
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("cant create str token"))
+		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf("can't create str token"))
 		return
 	}
 
-	c.JSON(http.StatusOK, schemes.LoginResp{
-		ExpiresIn:   JWTConfig.ExpiresIn,
+	c.JSON(http.StatusOK, schemes.AuthResp{
 		AccessToken: strToken,
 		TokenType:   "Bearer",
 	})
@@ -111,13 +108,12 @@ func (app *Application) Login(c *gin.Context) {
 // @Tags		Авторизация
 // @Description	Выход из аккаунта
 // @Accept		json
-// @Produce		json
 // @Success		200
-// @Router		/api/user/loguot [post]
+// @Router		/api/user/logout [get]
 func (app *Application) Logout(c *gin.Context) {
 	jwtStr := c.GetHeader("Authorization")
 	if !strings.HasPrefix(jwtStr, jwtPrefix) {
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf(jwtStr))
 		return
 	}
 

@@ -12,7 +12,7 @@ import (
 
 // @Summary		Получить все модули
 // @Tags		Модули
-// @Description	Возвращает все доступные модули с опциональной фильтрацией по типу
+// @Description	Возвращает все доступные модули с опциональной фильтрацией по названию
 // @Produce		json
 // @Param		name query string false "название модуля для фильтрации"
 // @Success		200 {object} schemes.GetAllModulesResponse
@@ -30,23 +30,16 @@ func (app *Application) GetAllModules(c *gin.Context) {
 		return
 	}
 
-	var draftMission *ds.Mission = nil
-	if userId, exists := c.Get("userId"); exists {
-		draftMission, err = app.repo.GetDraftMission(userId.(string))
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-	}
 	response := schemes.GetAllModulesResponse{DraftMission: nil, Modules: modules}
-	if draftMission != nil {
-		response.DraftMission = &schemes.MissionShort{UUID: draftMission.UUID}
-		modules, err := app.repo.GetFlight(draftMission.UUID)
+	if userId, exists := c.Get("userId"); exists {
+		draftMission, err := app.repo.GetDraftMission(userId.(string))
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		response.DraftMission.ModuleCount = len(modules)
+		if draftMission != nil {
+			response.DraftMission = &draftMission.UUID
+		}
 	}
 	c.JSON(http.StatusOK, response)
 }
@@ -99,9 +92,11 @@ func (app *Application) DeleteModule(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("модуль не найден"))
 		return
 	}
-	if err := app.deleteImage(c, module.UUID); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+	if module.ImageURL != nil {
+		if err := app.deleteImage(c, module.UUID); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
 	module.ImageURL = nil
 	module.IsDeleted = true
@@ -240,7 +235,6 @@ func (app *Application) AddToMission(c *gin.Context) {
 	}
 	var err error
 
-	// Проверить существует ли модуль
 	module, err := app.repo.GetModuleByID(request.ModuleId)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -251,7 +245,6 @@ func (app *Application) AddToMission(c *gin.Context) {
 		return
 	}
 
-	// Получить черновую заявку
 	var mission *ds.Mission
 	userId := getUserId(c)
 	mission, err = app.repo.GetDraftMission(userId)
@@ -267,19 +260,9 @@ func (app *Application) AddToMission(c *gin.Context) {
 		}
 	}
 
-	// Создать связь меджду миссией и модулем
 	if err = app.repo.AddToMission(mission.UUID, request.ModuleId); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-
-	// Вернуть список всех модулей в миссии
-	var modules []ds.Module
-	modules, err = app.repo.GetFlight(mission.UUID)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, schemes.AllModulesResponse{Modules: modules})
+	c.Status(http.StatusOK)
 }

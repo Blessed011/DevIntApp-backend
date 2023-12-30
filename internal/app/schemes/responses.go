@@ -2,21 +2,15 @@ package schemes
 
 import (
 	"lab1/internal/app/ds"
-	"time"
 )
 
 type AllModulesResponse struct {
 	Modules []ds.Module `json:"modules"`
 }
 
-type MissionShort struct {
-	UUID        string `json:"uuid"`
-	ModuleCount int    `json:"module_count"`
-}
-
 type GetAllModulesResponse struct {
-	DraftMission *MissionShort `json:"draft_mission"`
-	Modules      []ds.Module   `json:"modules"`
+	DraftMission *string     `json:"draft_mission"`
+	Modules      []ds.Module `json:"modules"`
 }
 
 type AllMissionsResponse struct {
@@ -51,7 +45,7 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 		UUID:             mission.UUID,
 		Name:             mission.Name,
 		Status:           mission.Status,
-		DateCreated:      mission.DateCreated.Format("2006-01-02 15:04:05"),
+		DateCreated:      mission.DateCreated.Format("2006-01-02T15:04:05Z07:00"),
 		Description:      mission.Description,
 		DateStartMission: mission.DateStartMission.Format("2006-01-02"),
 		FundingStatus:    mission.FundingStatus,
@@ -59,12 +53,12 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 	}
 
 	if mission.DateApprove != nil {
-		dateApprove := mission.DateApprove.Format("2006-01-02 15:04:05")
+		dateApprove := mission.DateApprove.Format("2006-01-02T15:04:05Z07:00")
 		output.DateApprove = &dateApprove
 	}
 
 	if mission.DateEnd != nil {
-		dateEnd := mission.DateEnd.Format("2006-01-02 15:04:05")
+		dateEnd := mission.DateEnd.Format("2006-01-02T15:04:05Z07:00")
 		output.DateEnd = &dateEnd
 	}
 
@@ -75,18 +69,26 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 	return output
 }
 
-type LoginResp struct {
-	ExpiresIn   time.Duration `json:"expires_in"`
-	AccessToken string        `json:"access_token"`
-	TokenType   string        `json:"token_type"`
-}
+// type LoginResp struct {
+// 	ExpiresIn   time.Duration `json:"expires_in"`
+// 	AccessToken string        `json:"access_token"`
+// 	TokenType   string        `json:"token_type"`
+// }
 
-type SwaggerLoginResp struct {
-	ExpiresIn   int64  `json:"expires_in"`
+// type SwaggerLoginResp struct {
+// 	ExpiresIn   int64  `json:"expires_in"`
+// 	AccessToken string `json:"access_token"`
+// 	TokenType   string `json:"token_type"`
+// }
+
+// type RegisterResp struct {
+// 	Ok bool `json:"ok"`
+// }
+
+type AddToMissionResp struct {
+	ModulesCount int64 `json:"module_count"`
+}
+type AuthResp struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
-}
-
-type RegisterResp struct {
-	Ok bool `json:"ok"`
 }

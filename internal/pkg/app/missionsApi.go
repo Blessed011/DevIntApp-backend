@@ -108,17 +108,15 @@ type SwaggerUpdateMissionRequest struct {
 // @Router		/api/missions/{mission_id} [put]
 func (app *Application) UpdateMission(c *gin.Context) {
 	var request schemes.UpdateMissionRequest
-	if err := c.ShouldBindUri(&request.URI); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	if err := c.ShouldBind(&request); err != nil {
+	var err error
+	if err := c.ShouldBindUri(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
+	var mission *ds.Mission
 	userId := getUserId(c)
-	mission, err := app.repo.GetMissionById(request.URI.MissionId, &userId)
+	mission, err = app.repo.GetDraftMission(userId)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -135,31 +133,21 @@ func (app *Application) UpdateMission(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, schemes.UpdateMissionResponse{Mission: schemes.ConvertMission(mission)})
+	c.Status(http.StatusOK)
 }
 
-// @Summary		Удалить миссию
+// @Summary		Удалить черновую миссию
 // @Tags		Миссии
-// @Description	Удаляет миссию по id
-// @Param		mission_id path string true "id миссии"
+// @Description	Удаляет черновую миссию
 // @Success		200
-// @Router		/api/missions/{mission_id} [delete]
+// @Router		/api/missions/ [delete]
 func (app *Application) DeleteMission(c *gin.Context) {
-	var request schemes.MissionRequest
 	var err error
-	if err := c.ShouldBindUri(&request); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
 
-	userId := getUserId(c)
-	userRole := getUserRole(c)
+	// Получить черновую заявку
 	var mission *ds.Mission
-	if userRole == role.Moderator {
-		mission, err = app.repo.GetMissionById(request.MissionId, nil)
-	} else {
-		mission, err = app.repo.GetMissionById(request.MissionId, &userId)
-	}
+	userId := getUserId(c)
+	mission, err = app.repo.GetDraftMission(userId)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -169,10 +157,6 @@ func (app *Application) DeleteMission(c *gin.Context) {
 		return
 	}
 
-	if userRole == role.Customer && mission.Status != ds.DRAFT {
-		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("миссия уже сформирована"))
-		return
-	}
 	mission.Status = ds.DELETED
 
 	if err := app.repo.SaveMission(mission); err != nil {
@@ -182,14 +166,13 @@ func (app *Application) DeleteMission(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-// @Summary		Удалить модуль из миссии
+// @Summary		Удалить модуль из черновой миссии
 // @Tags		Миссии
-// @Description	Удалить модуль из миссии
+// @Description	Удалить модуль из черновой миссии
 // @Produce		json
-// @Param		mission_id path string true "id миссии"
 // @Param		module_id path string true "id модуля"
 // @Success		200 {object} schemes.AllModulesResponse
-// @Router		/api/missions/{mission_id}/delete_module/{module_id} [delete]
+// @Router		/api/missions/delete_module/{module_id} [delete]
 func (app *Application) DeleteFromMission(c *gin.Context) {
 	var request schemes.DeleteFromMissionRequest
 	var err error
@@ -198,14 +181,9 @@ func (app *Application) DeleteFromMission(c *gin.Context) {
 		return
 	}
 
-	userId := getUserId(c)
-	userRole := getUserRole(c)
 	var mission *ds.Mission
-	if userRole == role.Moderator {
-		mission, err = app.repo.GetMissionById(request.MissionId, nil)
-	} else {
-		mission, err = app.repo.GetMissionById(request.MissionId, &userId)
-	}
+	userId := getUserId(c)
+	mission, err = app.repo.GetDraftMission(userId)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -214,31 +192,19 @@ func (app *Application) DeleteFromMission(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	if mission.Status != ds.DRAFT {
-		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя редактировать миссию со статусом: %s", mission.Status))
-		return
-	}
 
-	if err := app.repo.DeleteFromMission(request.MissionId, request.ModuleId); err != nil {
+	if err := app.repo.DeleteFromMission(mission.UUID, request.ModuleId); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	modules, err := app.repo.GetFlight(request.MissionId)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, schemes.AllModulesResponse{Modules: modules})
+	c.Status(http.StatusOK)
 }
 
 // @Summary		Сформировать миссию
 // @Tags		Миссии
-// @Description	Сформировать или удалить миссию пользователем
-// @Produce		json
-// @Param		confirm body boolean true "подтвердить"
-// @Success		200 {object} schemes.MissionOutput
+// @Description	Сформировать миссию пользователем
+// @Success		200
 // @Router		/api/missions/user_confirm [put]
 func (app *Application) UserConfirm(c *gin.Context) {
 	userId := getUserId(c)
@@ -251,10 +217,7 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	if mission.Status != ds.DRAFT {
-		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя сформировать миссию со статусом %s", mission.Status))
-		return
-	}
+
 	if err := fundingRequest(mission.UUID); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`funding is impossible: {%s}`, err))
 		return
@@ -271,7 +234,7 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, schemes.ConvertMission(mission))
+	c.Status(http.StatusOK)
 }
 
 // @Summary		Подтвердить миссию
@@ -315,13 +278,19 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	} else {
 		mission.Status = ds.REJECTED
 	}
+	moderator, err := app.repo.GetUserById(userId)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	mission.ModeratorId = &userId
+	mission.Moderator = moderator
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.Status(http.StatusOK)
+	c.JSON(http.StatusOK, schemes.ConvertMission(mission))
 }
 
 func (app *Application) Funding(c *gin.Context) {

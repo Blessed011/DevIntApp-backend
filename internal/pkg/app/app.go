@@ -48,13 +48,13 @@ func (app *Application) Run() {
 		// Заявки (миссии)
 		missions := api.Group("/missions")
 		{
-			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                            // Список (отфильтровать по дате формирования и статусу)
-			missions.GET("/:mission_id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                                    // Одна заявка
-			missions.PUT("/:mission_id/update", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                          // Изменение (добавление)
-			missions.DELETE("/:mission_id", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                             //Удаление
-			missions.DELETE("/:mission_id/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
-			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                  // Сформировать создателем
-			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                           // Завершить отклонить модератором
+			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                // Список (отфильтровать по дате формирования и статусу)
+			missions.GET("/:mission_id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                        // Одна заявка
+			missions.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                                 // Изменение (добавление)
+			missions.DELETE("", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                             //Удаление
+			missions.DELETE("/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
+			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                      // Сформировать создателем
+			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)               // Завершить отклонить модератором
 			missions.PUT("/:mission_id/funding", app.Funding)
 		}
 		// Пользователи (авторизация)
@@ -68,7 +68,7 @@ func (app *Application) Run() {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	log.Println("Host and Port: ", app.config.ServiceHost, app.config.ServicePort)
-	r.Run(fmt.Sprintf("localhost:80"))
+	r.Run(fmt.Sprintf("localhost:80")) //......................................changeable
 
 	log.Println("Server down")
 }
