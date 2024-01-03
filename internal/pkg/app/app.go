@@ -15,8 +15,8 @@ import (
 	"lab1/internal/app/repository"
 	"lab1/internal/app/role"
 
-	swaggerFiles "github.com/swaggo/files"     // swagger embed files
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Application struct {
@@ -35,7 +35,7 @@ func (app *Application) Run() {
 
 	api := r.Group("/api")
 	{
-		// Услуги (модули)
+
 		modules := api.Group("/modules")
 		{
 			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllModules)        // Список с поиском
@@ -45,7 +45,7 @@ func (app *Application) Run() {
 			modules.POST("", app.WithAuthCheck(role.Moderator), app.AddModule)                                              // Добавление
 			modules.POST("/:module_id/add_to_mission", app.WithAuthCheck(role.Customer, role.Moderator), app.AddToMission)  // Добавление в заявку
 		}
-		// Заявки (миссии)
+
 		missions := api.Group("/missions")
 		{
 			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                // Список (отфильтровать по дате формирования и статусу)
@@ -57,7 +57,7 @@ func (app *Application) Run() {
 			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)               // Завершить отклонить модератором
 			missions.PUT("/:mission_id/funding", app.Funding)
 		}
-		// Пользователи (авторизация)
+
 		user := api.Group("/user")
 		{
 			user.POST("/sign_up", app.Register)
