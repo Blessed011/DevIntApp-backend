@@ -2,17 +2,11 @@ package dsn
 
 import (
 	"fmt"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 // FromEnv собирает DSN строку из переменных окружения
 func FromEnv() string {
-	if err := godotenv.Load("../../.env"); err != nil {
-		log.Print("No .env file found")
-	}
 	host := os.Getenv("DB_HOST")
 	if host == "" {
 		return ""

@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-const DRAFT string = "черновик"
-const FORMED string = "сформирован"
-const COMPELTED string = "завершён"
-const REJECTED string = "отклонён"
-const DELETED string = "удалён"
+const StatusDraft string = "черновик"
+const StatusFormed string = "сформирован"
+const StatusCompleted string = "завершён"
+const StatusRejected string = "отклонён"
+const StatusDeleted string = "удалён"
 
 const FundingApproved string = "финансирование одобрено"
 const FundingRejected string = "финансирование отклонено"

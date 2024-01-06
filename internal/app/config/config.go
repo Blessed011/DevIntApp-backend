@@ -17,9 +17,10 @@ type Config struct {
 	ServiceHost string
 	ServicePort int
 	Token       string
-	JWT         JWTConfig   `mapstructure:"jwt"`
-	Minio       MinioConfig `mapstructure:"minio"`
-	Redis       RedisConfig
+
+	JWT   JWTConfig   `mapstructure:"jwt"`
+	Minio MinioConfig `mapstructure:"minio"`
+	Redis RedisConfig
 }
 
 type MinioConfig struct {
@@ -49,6 +50,7 @@ const (
 	envRedisPass = "REDIS_PASSWORD"
 )
 
+// NewConfig Создаёт новый объект конфигурации, загружая данные из файла конфигурации
 func NewConfig() (*Config, error) {
 	var err error
 
@@ -74,7 +76,6 @@ func NewConfig() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Println("SSSSSSS" + cfg.ServiceHost)
 	if os.Getenv("JWT_TOKEN") != "" {
 		cfg.JWT.Token = os.Getenv("JWT_TOKEN")
 	} else {
@@ -93,5 +94,6 @@ func NewConfig() (*Config, error) {
 	cfg.Redis.User = os.Getenv(envRedisUser)
 
 	log.Info("config parsed")
+
 	return cfg, nil
 }

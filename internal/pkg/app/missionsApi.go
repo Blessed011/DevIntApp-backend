@@ -53,9 +53,9 @@ func (app *Application) GetAllMissions(c *gin.Context) {
 // @Tags		Миссии
 // @Description	Возвращает подробную информацию о миссии
 // @Produce		json
-// @Param		mission_id path string true "id миссии"
+// @Param		id path string true "id миссии"
 // @Success		200 {object} schemes.MissionResponse
-// @Router		/api/missions/{mission_id} [get]
+// @Router		/api/missions/{id} [get]
 func (app *Application) GetMission(c *gin.Context) {
 	var request schemes.MissionRequest
 	var err error
@@ -100,12 +100,12 @@ type SwaggerUpdateMissionRequest struct {
 // @Description	Позволяет изменить название, дату старта и описание миссии и возвращает обновлённые данные
 // @Access		json
 // @Produce		json
-// @Param		mission_id path string true "id миссии"
+// @Param		id path string true "id миссии"
 // @Param		name body SwaggerUpdateMissionRequest true "Название"
 // @Param		date_start_mission body SwaggerUpdateMissionRequest true "Дата старта"
 // @Param		description body SwaggerUpdateMissionRequest true "Описание"
 // @Success		200 {object} schemes.UpdateMissionResponse
-// @Router		/api/missions/{mission_id} [put]
+// @Router		/api/missions/{id} [put]
 func (app *Application) UpdateMission(c *gin.Context) {
 	var request schemes.UpdateMissionRequest
 	var err error
@@ -157,7 +157,7 @@ func (app *Application) DeleteMission(c *gin.Context) {
 		return
 	}
 
-	mission.Status = ds.DELETED
+	mission.Status = ds.StatusDeleted
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -170,9 +170,9 @@ func (app *Application) DeleteMission(c *gin.Context) {
 // @Tags		Миссии
 // @Description	Удалить модуль из черновой миссии
 // @Produce		json
-// @Param		module_id path string true "id модуля"
+// @Param		id path string true "id модуля"
 // @Success		200 {object} schemes.AllModulesResponse
-// @Router		/api/missions/delete_module/{module_id} [delete]
+// @Router		/api/missions/delete_module/{id} [delete]
 func (app *Application) DeleteFromMission(c *gin.Context) {
 	var request schemes.DeleteFromMissionRequest
 	var err error
@@ -226,7 +226,7 @@ func (app *Application) UserConfirm(c *gin.Context) {
 	fundingStatus := ds.FundingOnConsideration
 	mission.FundingStatus = &fundingStatus
 
-	mission.Status = ds.FORMED
+	mission.Status = ds.StatusFormed
 	now := time.Now()
 	mission.DateApprove = &now
 
@@ -241,10 +241,10 @@ func (app *Application) UserConfirm(c *gin.Context) {
 // @Tags		Миссии
 // @Description	Подтвердить или отменить миссию модератором
 // @Produce		json
-// @Param		mission_id path string true "id миссии"
+// @Param		id path string true "id миссии"
 // @Param		confirm body boolean true "подтвердить"
 // @Success		200
-// @Router		/api/missions/{mission_id}/moderator_confirm [put]
+// @Router		/api/missions/{id}/moderator_confirm [put]
 func (app *Application) ModeratorConfirm(c *gin.Context) {
 	var request schemes.ModeratorConfirmRequest
 	if err := c.ShouldBindUri(&request.URI); err != nil {
@@ -266,17 +266,17 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	if mission.Status != ds.FORMED {
-		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя изменить статус миссии с \"%s\" на \"%s\"", mission.Status, ds.FORMED))
+	if mission.Status != ds.StatusFormed {
+		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя изменить статус миссии с \"%s\" на \"%s\"", mission.Status, ds.StatusFormed))
 		return
 	}
 
 	if *request.Confirm {
-		mission.Status = ds.COMPELTED
+		mission.Status = ds.StatusCompleted
 		now := time.Now()
 		mission.DateEnd = &now
 	} else {
-		mission.Status = ds.REJECTED
+		mission.Status = ds.StatusRejected
 	}
 	moderator, err := app.repo.GetUserById(userId)
 	if err != nil {
@@ -322,7 +322,7 @@ func (app *Application) Funding(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	// if mission.Status != ds.FORMED || *mission.FundingStatus != ds.FundingOnConsideration {
+	// if mission.Status != ds.StatusFormed || *mission.FundingStatus != ds.FundingOnConsideration {
 	// 	c.AbortWithStatus(http.StatusMethodNotAllowed)
 	// 	return
 	// }

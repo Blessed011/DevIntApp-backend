@@ -15,8 +15,7 @@ func (r *Repository) GetAllMissions(customerId *string, dateApproveStart, dateAp
 
 	query := r.db.Preload("Customer").Preload("Moderator").
 		Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-		Where("status != ?", ds.DELETED).
-		Where("status != ?", ds.DRAFT)
+		Where("status != ? AND status != ?", ds.StatusDeleted, ds.StatusDraft)
 
 	if customerId != nil {
 		query = query.Where("customer_id = ?", *customerId)
@@ -37,7 +36,7 @@ func (r *Repository) GetAllMissions(customerId *string, dateApproveStart, dateAp
 
 func (r *Repository) GetDraftMission(customerId string) (*ds.Mission, error) {
 	mission := &ds.Mission{}
-	err := r.db.First(mission, ds.Mission{Status: ds.DRAFT, CustomerId: customerId}).Error
+	err := r.db.First(mission, ds.Mission{Status: ds.StatusDraft, CustomerId: customerId}).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -48,7 +47,7 @@ func (r *Repository) GetDraftMission(customerId string) (*ds.Mission, error) {
 }
 
 func (r *Repository) CreateDraftMission(customerId string) (*ds.Mission, error) {
-	mission := &ds.Mission{DateCreated: time.Now(), CustomerId: customerId, Status: ds.DRAFT}
+	mission := &ds.Mission{DateCreated: time.Now(), CustomerId: customerId, Status: ds.StatusDraft}
 	err := r.db.Create(mission).Error
 	if err != nil {
 		return nil, err
@@ -59,7 +58,7 @@ func (r *Repository) CreateDraftMission(customerId string) (*ds.Mission, error) 
 func (r *Repository) GetMissionById(missionId string, userId *string) (*ds.Mission, error) {
 	mission := &ds.Mission{}
 	query := r.db.Preload("Moderator").Preload("Customer").
-		Where("status != ?", ds.DELETED)
+		Where("status != ?", ds.StatusDeleted)
 	if userId != nil {
 		query = query.Where("customer_id = ?", userId)
 	}

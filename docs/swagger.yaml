@@ -165,13 +165,13 @@ paths:
       summary: Удалить черновую миссию
       tags:
       - Миссии
-  /api/missions/{mission_id}:
+  /api/missions/{id}:
     get:
       description: Возвращает подробную информацию о миссии
       parameters:
       - description: id миссии
         in: path
-        name: mission_id
+        name: id
         required: true
         type: string
       produces:
@@ -190,7 +190,7 @@ paths:
       parameters:
       - description: id миссии
         in: path
-        name: mission_id
+        name: id
         required: true
         type: string
       - description: Название
@@ -221,13 +221,13 @@ paths:
       summary: Указать название, дату старта и описание миссии
       tags:
       - Миссии
-  /api/missions/{mission_id}/moderator_confirm:
+  /api/missions/{id}/moderator_confirm:
     put:
       description: Подтвердить или отменить миссию модератором
       parameters:
       - description: id миссии
         in: path
-        name: mission_id
+        name: id
         required: true
         type: string
       - description: подтвердить
@@ -244,13 +244,13 @@ paths:
       summary: Подтвердить миссию
       tags:
       - Миссии
-  /api/missions/delete_module/{module_id}:
+  /api/missions/delete_module/{id}:
     delete:
       description: Удалить модуль из черновой миссии
       parameters:
       - description: id модуля
         in: path
-        name: module_id
+        name: id
         required: true
         type: string
       produces:
@@ -331,13 +331,13 @@ paths:
       summary: Добавить модуль
       tags:
       - Модули
-  /api/modules/{module_id}:
+  /api/modules/{id}:
     delete:
       description: Удаляет модуль по id
       parameters:
       - description: id модуля
         in: path
-        name: module_id
+        name: id
         required: true
         type: string
       responses:
@@ -351,7 +351,7 @@ paths:
       parameters:
       - description: id модуля
         in: path
-        name: module_id
+        name: id
         required: true
         type: string
       produces:
@@ -371,7 +371,7 @@ paths:
       parameters:
       - description: Идентификатор модуля
         in: path
-        name: module_id
+        name: id
         required: true
         type: string
       - description: Изображение модуля
@@ -409,13 +409,13 @@ paths:
       summary: Изменить модуль
       tags:
       - Модули
-  /api/modules/{module_id}/add_to_mission:
+  /api/modules/{id}/add_to_mission:
     post:
       description: Добавить выбранный модуль в черновик миссии
       parameters:
       - description: id модуля
         in: path
-        name: module_id
+        name: id
         required: true
         type: string
       produces:

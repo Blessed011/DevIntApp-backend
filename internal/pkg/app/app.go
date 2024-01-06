@@ -38,31 +38,31 @@ func (app *Application) Run() {
 
 		modules := api.Group("/modules")
 		{
-			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllModules)        // Список с поиском
-			modules.GET("/:module_id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetModule) // Одна услуга
-			modules.DELETE("/:module_id", app.WithAuthCheck(role.Moderator), app.DeleteModule)                              // Удаление
-			modules.PUT("/:module_id", app.WithAuthCheck(role.Moderator), app.ChangeModule)                                 // Изменение
-			modules.POST("", app.WithAuthCheck(role.Moderator), app.AddModule)                                              // Добавление
-			modules.POST("/:module_id/add_to_mission", app.WithAuthCheck(role.Customer, role.Moderator), app.AddToMission)  // Добавление в заявку
+			modules.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllModules) // Список с поиском
+			modules.GET("/:id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetModule) // Одна услуга
+			modules.DELETE("/:id", app.WithAuthCheck(role.Moderator), app.DeleteModule)                              // Удаление
+			modules.PUT("/:id", app.WithAuthCheck(role.Moderator), app.ChangeModule)                                 // Изменение
+			modules.POST("", app.WithAuthCheck(role.Moderator), app.AddModule)                                       // Добавление
+			modules.POST("/:id/add_to_mission", app.WithAuthCheck(role.Customer, role.Moderator), app.AddToMission)  // Добавление в заявку
 		}
 
 		missions := api.Group("/missions")
 		{
-			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                                // Список (отфильтровать по дате формирования и статусу)
-			missions.GET("/:mission_id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                        // Одна заявка
-			missions.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                                 // Изменение (добавление)
-			missions.DELETE("", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                             //Удаление
-			missions.DELETE("/delete_module/:module_id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
-			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                      // Сформировать создателем
-			missions.PUT("/:mission_id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)               // Завершить отклонить модератором
-			missions.PUT("/:mission_id/funding", app.Funding)
+			missions.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllMissions)                         // Список (отфильтровать по дате формирования и статусу)
+			missions.GET("/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetMission)                         // Одна заявка
+			missions.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateMission)                          // Изменение (добавление)
+			missions.DELETE("", app.WithAuthCheck(role.Moderator), app.DeleteMission)                                      //Удаление
+			missions.DELETE("/delete_module/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission) // Изменеие (удаление услуг)
+			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)               // Сформировать создателем
+			missions.PUT("/:id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                // Завершить отклонить модератором
+			missions.PUT("/:id/funding", app.Funding)
 		}
 
 		user := api.Group("/user")
 		{
 			user.POST("/sign_up", app.Register)
 			user.POST("/login", app.Login)
-			user.POST("/logout", app.Logout)
+			user.GET("/logout", app.Logout)
 		}
 	}
 

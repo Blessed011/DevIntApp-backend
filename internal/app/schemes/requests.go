@@ -7,7 +7,7 @@ import (
 )
 
 type ModuleRequest struct {
-	ModuleId string `uri:"module_id" binding:"required,uuid"`
+	ModuleId string `uri:"id" binding:"required,uuid"`
 }
 
 type GetAllModulesRequest struct {
@@ -20,7 +20,7 @@ type AddModuleRequest struct {
 }
 
 type ChangeModuleRequest struct {
-	ModuleId    string                `uri:"module_id" binding:"required,uuid"`
+	ModuleId    string                `uri:"id" binding:"required,uuid"`
 	Name        *string               `form:"name" json:"name" binding:"omitempty,max=100"`
 	Description *string               `form:"description" json:"description" binding:"omitempty,max=75"`
 	Mass        *string               `form:"mass" json:"mass"`
@@ -30,7 +30,7 @@ type ChangeModuleRequest struct {
 }
 
 type AddToMissionRequest struct {
-	ModuleId string `uri:"module_id" binding:"required,uuid"`
+	ModuleId string `uri:"id" binding:"required,uuid"`
 }
 
 type GetAllMissionsRequest struct {
@@ -40,7 +40,7 @@ type GetAllMissionsRequest struct {
 }
 
 type MissionRequest struct {
-	MissionId string `uri:"mission_id" binding:"required,uuid"`
+	MissionId string `uri:"id" binding:"required,uuid"`
 }
 
 type UpdateMissionRequest struct {
@@ -50,12 +50,12 @@ type UpdateMissionRequest struct {
 }
 
 type DeleteFromMissionRequest struct {
-	ModuleId string `uri:"module_id" binding:"required,uuid"`
+	ModuleId string `uri:"id" binding:"required,uuid"`
 }
 
 type ModeratorConfirmRequest struct {
 	URI struct {
-		MissionId string `uri:"mission_id" binding:"required,uuid"`
+		MissionId string `uri:"id" binding:"required,uuid"`
 	}
 	Confirm *bool `form:"confirm" binding:"required"`
 }
@@ -72,7 +72,7 @@ type RegisterReq struct {
 
 type FundingReq struct {
 	URI struct {
-		MissionId string `uri:"mission_id" binding:"required,uuid"`
+		MissionId string `uri:"id" binding:"required,uuid"`
 	}
 	FundingStatus *bool  `json:"funding_status" form:"funding_status" binding:"required"`
 	Token         string `json:"token" form:"token" binding:"required"`

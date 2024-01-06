@@ -48,9 +48,9 @@ func (app *Application) GetAllModules(c *gin.Context) {
 // @Tags		Модули
 // @Description	Возвращает более подробную информацию об одном модуле
 // @Produce		json
-// @Param		module_id path string true "id модуля"
+// @Param		id path string true "id модуля"
 // @Success		200 {object} ds.Module
-// @Router		/api/modules/{module_id} [get]
+// @Router		/api/modules/{id} [get]
 func (app *Application) GetModule(c *gin.Context) {
 	var request schemes.ModuleRequest
 	if err := c.ShouldBindUri(&request); err != nil {
@@ -73,9 +73,9 @@ func (app *Application) GetModule(c *gin.Context) {
 // @Summary		Удалить модуль
 // @Tags		Модули
 // @Description	Удаляет модуль по id
-// @Param		module_id path string true "id модуля"
+// @Param		id path string true "id модуля"
 // @Success		200
-// @Router		/api/modules/{module_id} [delete]
+// @Router		/api/modules/{id} [delete]
 func (app *Application) DeleteModule(c *gin.Context) {
 	var request schemes.ModuleRequest
 	if err := c.ShouldBindUri(&request); err != nil {
@@ -154,14 +154,14 @@ func (app *Application) AddModule(c *gin.Context) {
 // @Description	Изменить данные полей о модуле
 // @Accept		mpfd
 // @Produce		json
-// @Param		module_id path string true "Идентификатор модуля" format:"uuid"
+// @Param		id path string true "Идентификатор модуля" format:"uuid"
 // @Param		image formData file false "Изображение модуля"
 // @Param		name formData string true "Название" format:"string" maxLength:50
 // @Param		description formData string true "Описание" format:"string" maxLength:100
 // @Param		mass formData string true "Масса" format:"string" maxLength:10
 // @Param		length formData int true "Длина" format:"string" maxLength:10
 // @Param		diameter formData int true "Диаметр" format:"string" maxLength:10
-// @Router		/api/modules/{module_id} [put]
+// @Router		/api/modules/{id} [put]
 func (app *Application) ChangeModule(c *gin.Context) {
 	var request schemes.ChangeModuleRequest
 	if err := c.ShouldBindUri(&request); err != nil {
@@ -224,9 +224,9 @@ func (app *Application) ChangeModule(c *gin.Context) {
 // @Tags		Модули
 // @Description	Добавить выбранный модуль в черновик миссии
 // @Produce		json
-// @Param		module_id path string true "id модуля"
+// @Param		id path string true "id модуля"
 // @Success		200 {object} schemes.AllModulesResponse
-// @Router		/api/modules/{module_id}/add_to_mission [post]
+// @Router		/api/modules/{id}/add_to_mission [post]
 func (app *Application) AddToMission(c *gin.Context) {
 	var request schemes.AddToMissionRequest
 	if err := c.ShouldBindUri(&request); err != nil {

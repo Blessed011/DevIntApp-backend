@@ -69,7 +69,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/missions/delete_module/{module_id}": {
+        "/api/missions/delete_module/{id}": {
             "delete": {
                 "description": "Удалить модуль из черновой миссии",
                 "produces": [
@@ -83,7 +83,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id модуля",
-                        "name": "module_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -112,7 +112,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/missions/{mission_id}": {
+        "/api/missions/{id}": {
             "get": {
                 "description": "Возвращает подробную информацию о миссии",
                 "produces": [
@@ -126,7 +126,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id миссии",
-                        "name": "mission_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -153,7 +153,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id миссии",
-                        "name": "mission_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -195,7 +195,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/missions/{mission_id}/moderator_confirm": {
+        "/api/missions/{id}/moderator_confirm": {
             "put": {
                 "description": "Подтвердить или отменить миссию модератором",
                 "produces": [
@@ -209,7 +209,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id миссии",
-                        "name": "mission_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -318,7 +318,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/modules/{module_id}": {
+        "/api/modules/{id}": {
             "get": {
                 "description": "Возвращает более подробную информацию об одном модуле",
                 "produces": [
@@ -332,7 +332,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id модуля",
-                        "name": "module_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -362,7 +362,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Идентификатор модуля",
-                        "name": "module_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -420,7 +420,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id модуля",
-                        "name": "module_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -432,7 +432,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/modules/{module_id}/add_to_mission": {
+        "/api/modules/{id}/add_to_mission": {
             "post": {
                 "description": "Добавить выбранный модуль в черновик миссии",
                 "produces": [
@@ -446,7 +446,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "id модуля",
-                        "name": "module_id",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
