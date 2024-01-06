@@ -2,10 +2,6 @@ basePath: /
 definitions:
   app.SwaggerUpdateMissionRequest:
     properties:
-      date_start_mission:
-        type: string
-      description:
-        type: string
       name:
         type: string
     type: object
@@ -36,13 +32,6 @@ definitions:
       missions:
         items:
           $ref: '#/definitions/schemes.MissionOutput'
-        type: array
-    type: object
-  schemes.AllModulesResponse:
-    properties:
-      modules:
-        items:
-          $ref: '#/definitions/ds.Module'
         type: array
     type: object
   schemes.AuthResp:
@@ -83,12 +72,6 @@ definitions:
         type: string
       date_end:
         type: string
-      date_start_mission:
-        type: string
-      description:
-        type: string
-      funding_status:
-        type: string
       moderator:
         type: string
       name:
@@ -119,11 +102,6 @@ definitions:
     - login
     - password
     type: object
-  schemes.UpdateMissionResponse:
-    properties:
-      missions:
-        $ref: '#/definitions/schemes.MissionOutput'
-    type: object
 host: 127.0.0.1:80
 info:
   contact: {}
@@ -131,6 +109,14 @@ info:
   version: "1.0"
 paths:
   /api/missions:
+    delete:
+      description: Удаляет черновую миссию
+      responses:
+        "200":
+          description: OK
+      summary: Удалить черновую миссию
+      tags:
+      - Миссии
     get:
       description: Возвращает все миссии с фильтрацией по статусу и дате формирования
       parameters:
@@ -156,13 +142,21 @@ paths:
       summary: Получить все миссии
       tags:
       - Миссии
-  /api/missions/:
-    delete:
-      description: Удаляет черновую миссию
+    put:
+      description: Позволяет изменить название миссии и возвращает обновлённые данные
+      parameters:
+      - description: Название
+        in: body
+        name: name
+        required: true
+        schema:
+          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
-      summary: Удалить черновую миссию
+      summary: Указать название
       tags:
       - Миссии
   /api/missions/{id}:
@@ -184,43 +178,6 @@ paths:
       summary: Получить одну миссию
       tags:
       - Миссии
-    put:
-      description: Позволяет изменить название, дату старта и описание миссии и возвращает
-        обновлённые данные
-      parameters:
-      - description: id миссии
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Название
-        in: body
-        name: name
-        required: true
-        schema:
-          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
-      - description: Дата старта
-        in: body
-        name: date_start_mission
-        required: true
-        schema:
-          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
-      - description: Описание
-        in: body
-        name: description
-        required: true
-        schema:
-          $ref: '#/definitions/app.SwaggerUpdateMissionRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemes.UpdateMissionResponse'
-      summary: Указать название, дату старта и описание миссии
-      tags:
-      - Миссии
   /api/missions/{id}/moderator_confirm:
     put:
       description: Подтвердить или отменить миссию модератором
@@ -236,8 +193,6 @@ paths:
         required: true
         schema:
           type: boolean
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
@@ -258,8 +213,6 @@ paths:
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/schemes.AllModulesResponse'
       summary: Удалить модуль из черновой миссии
       tags:
       - Миссии
@@ -290,7 +243,6 @@ paths:
       summary: Получить все модули
       tags:
       - Модули
-  /api/modules/:
     post:
       consumes:
       - multipart/form-data
@@ -403,8 +355,6 @@ paths:
         name: diameter
         required: true
         type: integer
-      produces:
-      - application/json
       responses: {}
       summary: Изменить модуль
       tags:
@@ -418,13 +368,9 @@ paths:
         name: id
         required: true
         type: string
-      produces:
-      - application/json
       responses:
         "200":
           description: OK
-          schema:
-            $ref: '#/definitions/schemes.AllModulesResponse'
       summary: Добавить в миссию
       tags:
       - Модули

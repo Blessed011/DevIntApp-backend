@@ -44,9 +44,7 @@ type MissionRequest struct {
 }
 
 type UpdateMissionRequest struct {
-	Name             string     `form:"name" json:"name" binding:"required,max=50"`
-	DateStartMission *time.Time `form:"date_start_mission" json:"date_start_mission" time_format:"2006-01-02"`
-	Description      string     `form:"description" json:"description" binding:"required,max=100"`
+	Name string `form:"name" json:"name" binding:"required,max=50"`
 }
 
 type DeleteFromMissionRequest struct {

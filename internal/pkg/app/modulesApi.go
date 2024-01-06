@@ -119,7 +119,7 @@ func (app *Application) DeleteModule(c *gin.Context) {
 // @Param		length formData int true "Длина" format:"string" maxLength:10
 // @Param		diameter formData int true "Диаметр" format:"string" maxLength:10
 // @Success		200
-// @Router		/api/modules/ [post]
+// @Router		/api/modules [post]
 func (app *Application) AddModule(c *gin.Context) {
 	var request schemes.AddModuleRequest
 	if err := c.ShouldBind(&request); err != nil {
@@ -153,7 +153,6 @@ func (app *Application) AddModule(c *gin.Context) {
 // @Tags		Модули
 // @Description	Изменить данные полей о модуле
 // @Accept		mpfd
-// @Produce		json
 // @Param		id path string true "Идентификатор модуля" format:"uuid"
 // @Param		image formData file false "Изображение модуля"
 // @Param		name formData string true "Название" format:"string" maxLength:50
@@ -217,15 +216,14 @@ func (app *Application) ChangeModule(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, module)
+	c.Status(http.StatusOK)
 }
 
 // @Summary		Добавить в миссию
 // @Tags		Модули
 // @Description	Добавить выбранный модуль в черновик миссии
-// @Produce		json
 // @Param		id path string true "id модуля"
-// @Success		200 {object} schemes.AllModulesResponse
+// @Success		200
 // @Router		/api/modules/{id}/add_to_mission [post]
 func (app *Application) AddToMission(c *gin.Context) {
 	var request schemes.AddToMissionRequest

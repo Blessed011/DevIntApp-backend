@@ -50,8 +50,8 @@ func (r *Repository) SaveModule(module *ds.Module) error {
 }
 
 func (r *Repository) AddToMission(missionId, moduleId string) error {
-	Flight := ds.Flight{MissionId: missionId, ModuleId: moduleId}
-	err := r.db.Create(&Flight).Error
+	flight := ds.Flight{MissionId: missionId, ModuleId: moduleId}
+	err := r.db.Create(&flight).Error
 	if err != nil {
 		return err
 	}

@@ -90,22 +90,17 @@ func (app *Application) GetMission(c *gin.Context) {
 }
 
 type SwaggerUpdateMissionRequest struct {
-	Name             string     `json:"name"`
-	DateStartMission *time.Time `json:"date_start_mission" time_format:"2006-01-02"`
-	Description      string     `json:"description"`
+	Name string `json:"name"`
 }
 
-// @Summary		Указать название, дату старта и описание миссии
+// @Summary		Указать название
 // @Tags		Миссии
-// @Description	Позволяет изменить название, дату старта и описание миссии и возвращает обновлённые данные
+// @Description	Позволяет изменить название миссии и возвращает обновлённые данные
 // @Access		json
 // @Produce		json
-// @Param		id path string true "id миссии"
 // @Param		name body SwaggerUpdateMissionRequest true "Название"
-// @Param		date_start_mission body SwaggerUpdateMissionRequest true "Дата старта"
-// @Param		description body SwaggerUpdateMissionRequest true "Описание"
-// @Success		200 {object} schemes.UpdateMissionResponse
-// @Router		/api/missions/{id} [put]
+// @Success		200
+// @Router		/api/missions [put]
 func (app *Application) UpdateMission(c *gin.Context) {
 	var request schemes.UpdateMissionRequest
 	var err error
@@ -125,9 +120,7 @@ func (app *Application) UpdateMission(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	mission.Name = request.Name
-	mission.DateStartMission = *request.DateStartMission
-	mission.Description = request.Description
+	mission.Name = &request.Name
 	if app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -140,7 +133,7 @@ func (app *Application) UpdateMission(c *gin.Context) {
 // @Tags		Миссии
 // @Description	Удаляет черновую миссию
 // @Success		200
-// @Router		/api/missions/ [delete]
+// @Router		/api/missions [delete]
 func (app *Application) DeleteMission(c *gin.Context) {
 	var err error
 
@@ -171,7 +164,7 @@ func (app *Application) DeleteMission(c *gin.Context) {
 // @Description	Удалить модуль из черновой миссии
 // @Produce		json
 // @Param		id path string true "id модуля"
-// @Success		200 {object} schemes.AllModulesResponse
+// @Success		200
 // @Router		/api/missions/delete_module/{id} [delete]
 func (app *Application) DeleteFromMission(c *gin.Context) {
 	var request schemes.DeleteFromMissionRequest
@@ -240,7 +233,6 @@ func (app *Application) UserConfirm(c *gin.Context) {
 // @Summary		Подтвердить миссию
 // @Tags		Миссии
 // @Description	Подтвердить или отменить миссию модератором
-// @Produce		json
 // @Param		id path string true "id миссии"
 // @Param		confirm body boolean true "подтвердить"
 // @Success		200
@@ -290,7 +282,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, schemes.ConvertMission(mission))
+	c.Status(http.StatusOK)
 }
 
 func (app *Application) Funding(c *gin.Context) {

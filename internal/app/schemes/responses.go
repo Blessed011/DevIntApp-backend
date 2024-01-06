@@ -1,6 +1,7 @@
 package schemes
 
 import (
+	"fmt"
 	"lab1/internal/app/ds"
 )
 
@@ -27,29 +28,23 @@ type UpdateMissionResponse struct {
 }
 
 type MissionOutput struct {
-	UUID             string  `json:"uuid"`
-	Name             string  `json:"name"`
-	Status           string  `json:"status"`
-	DateCreated      string  `json:"date_created"`
-	DateApprove      *string `json:"date_approve"`
-	DateEnd          *string `json:"date_end"`
-	DateStartMission string  `json:"date_start_mission"`
-	Description      string  `json:"description"`
-	Moderator        *string `json:"moderator"`
-	Customer         string  `json:"customer"`
-	FundingStatus    *string `json:"funding_status"`
+	UUID        string  `json:"uuid"`
+	Name        *string `json:"name"`
+	Status      string  `json:"status"`
+	DateCreated string  `json:"date_created"`
+	DateApprove *string `json:"date_approve"`
+	DateEnd     *string `json:"date_end"`
+	Moderator   *string `json:"moderator"`
+	Customer    string  `json:"customer"`
 }
 
 func ConvertMission(mission *ds.Mission) MissionOutput {
 	output := MissionOutput{
-		UUID:             mission.UUID,
-		Name:             mission.Name,
-		Status:           mission.Status,
-		DateCreated:      mission.DateCreated.Format("2006-01-02T15:04:05Z07:00"),
-		Description:      mission.Description,
-		DateStartMission: mission.DateStartMission.Format("2006-01-02"),
-		FundingStatus:    mission.FundingStatus,
-		Customer:         mission.Customer.Login,
+		UUID:        mission.UUID,
+		Name:        mission.Name,
+		Status:      mission.Status,
+		DateCreated: mission.DateCreated.Format("2006-01-02T15:04:05Z07:00"),
+		Customer:    mission.Customer.Login,
 	}
 
 	if mission.DateApprove != nil {
@@ -63,7 +58,9 @@ func ConvertMission(mission *ds.Mission) MissionOutput {
 	}
 
 	if mission.Moderator != nil {
+		fmt.Println(mission.Moderator.Login)
 		output.Moderator = &mission.Moderator.Login
+		fmt.Println(*output.Moderator)
 	}
 
 	return output

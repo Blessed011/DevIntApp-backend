@@ -53,9 +53,33 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/missions/": {
+            },
+            "put": {
+                "description": "Позволяет изменить название миссии и возвращает обновлённые данные",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Миссии"
+                ],
+                "summary": "Указать название",
+                "parameters": [
+                    {
+                        "description": "Название",
+                        "name": "name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
             "delete": {
                 "description": "Удаляет черновую миссию",
                 "tags": [
@@ -90,10 +114,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.AllModulesResponse"
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -139,68 +160,11 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "Позволяет изменить название, дату старта и описание миссии и возвращает обновлённые данные",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Миссии"
-                ],
-                "summary": "Указать название, дату старта и описание миссии",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id миссии",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Название",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
-                        }
-                    },
-                    {
-                        "description": "Дата старта",
-                        "name": "date_start_mission",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
-                        }
-                    },
-                    {
-                        "description": "Описание",
-                        "name": "description",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/app.SwaggerUpdateMissionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.UpdateMissionResponse"
-                        }
-                    }
-                }
             }
         },
         "/api/missions/{id}/moderator_confirm": {
             "put": {
                 "description": "Подтвердить или отменить миссию модератором",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Миссии"
                 ],
@@ -256,9 +220,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/modules/": {
+            },
             "post": {
                 "description": "Добавить новый модуль",
                 "consumes": [
@@ -351,9 +313,6 @@ const docTemplate = `{
                 "consumes": [
                     "multipart/form-data"
                 ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Модули"
                 ],
@@ -435,9 +394,6 @@ const docTemplate = `{
         "/api/modules/{id}/add_to_mission": {
             "post": {
                 "description": "Добавить выбранный модуль в черновик миссии",
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "Модули"
                 ],
@@ -453,10 +409,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.AllModulesResponse"
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -545,12 +498,6 @@ const docTemplate = `{
         "app.SwaggerUpdateMissionRequest": {
             "type": "object",
             "properties": {
-                "date_start_mission": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 }
@@ -595,17 +542,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/schemes.MissionOutput"
-                    }
-                }
-            }
-        },
-        "schemes.AllModulesResponse": {
-            "type": "object",
-            "properties": {
-                "modules": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ds.Module"
                     }
                 }
             }
@@ -667,15 +603,6 @@ const docTemplate = `{
                 "date_end": {
                     "type": "string"
                 },
-                "date_start_mission": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "funding_status": {
-                    "type": "string"
-                },
                 "moderator": {
                     "type": "string"
                 },
@@ -718,14 +645,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 30
-                }
-            }
-        },
-        "schemes.UpdateMissionResponse": {
-            "type": "object",
-            "properties": {
-                "missions": {
-                    "$ref": "#/definitions/schemes.MissionOutput"
                 }
             }
         }
