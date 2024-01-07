@@ -363,7 +363,11 @@
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             },
             "delete": {
                 "description": "Удаляет модуль по id",
@@ -616,7 +620,7 @@
         "schemes.MissionResponse": {
             "type": "object",
             "properties": {
-                "missions": {
+                "mission": {
                     "$ref": "#/definitions/schemes.MissionOutput"
                 },
                 "modules": {

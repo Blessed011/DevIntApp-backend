@@ -83,7 +83,7 @@ definitions:
     type: object
   schemes.MissionResponse:
     properties:
-      missions:
+      mission:
         $ref: '#/definitions/schemes.MissionOutput'
       modules:
         items:
@@ -355,7 +355,9 @@ paths:
         name: diameter
         required: true
         type: integer
-      responses: {}
+      responses:
+        "200":
+          description: OK
       summary: Изменить модуль
       tags:
       - Модули

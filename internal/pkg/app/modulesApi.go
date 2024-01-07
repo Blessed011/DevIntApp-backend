@@ -160,6 +160,7 @@ func (app *Application) AddModule(c *gin.Context) {
 // @Param		mass formData string true "Масса" format:"string" maxLength:10
 // @Param		length formData int true "Длина" format:"string" maxLength:10
 // @Param		diameter formData int true "Диаметр" format:"string" maxLength:10
+// @Success		200
 // @Router		/api/modules/{id} [put]
 func (app *Application) ChangeModule(c *gin.Context) {
 	var request schemes.ChangeModuleRequest

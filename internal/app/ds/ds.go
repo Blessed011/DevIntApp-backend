@@ -11,10 +11,6 @@ const StatusCompleted string = "завершена"
 const StatusRejected string = "отклонена"
 const StatusDeleted string = "удалена"
 
-const FundingApproved string = "финансирование одобрено"
-const FundingRejected string = "финансирование отклонено"
-const FundingOnConsideration string = "финансирование на рассмотрении"
-
 type Module struct {
 	UUID        string  `gorm:"type:uuid;primary_key;default:gen_random_uuid()"  json:"uuid" binding:"-"`
 	Name        string  `gorm:"size:50;not null" json:"name"`
@@ -35,7 +31,6 @@ type Mission struct {
 	Status         string     `gorm:"size:20;not null"`
 	ModeratorId    *string    `json:"-"`
 	CustomerId     string     `gorm:not null`
-	FundingStatus  *string    `gorm:"size:40"`
 
 	Moderator *User
 	Customer  User

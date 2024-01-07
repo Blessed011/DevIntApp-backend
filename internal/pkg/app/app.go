@@ -56,7 +56,6 @@ func (app *Application) Run() {
 			missions.DELETE("/delete_module/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromMission)
 			missions.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)
 			missions.PUT("/:id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)
-			missions.PUT("/:id/funding", app.Funding)
 		}
 
 		user := api.Group("/user")

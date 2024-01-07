@@ -211,14 +211,6 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		return
 	}
 
-	if err := fundingRequest(mission.UUID); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`funding is impossible: {%s}`, err))
-		return
-	}
-
-	fundingStatus := ds.FundingOnConsideration
-	mission.FundingStatus = &fundingStatus
-
 	mission.Status = ds.StatusFormed
 	now := time.Now()
 	mission.FormationDate = &now
@@ -277,55 +269,6 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	}
 	mission.ModeratorId = &userId
 	mission.Moderator = moderator
-
-	if err := app.repo.SaveMission(mission); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	c.Status(http.StatusOK)
-}
-
-func (app *Application) Funding(c *gin.Context) {
-	var request schemes.FundingReq
-	var Token = "secret_token"
-
-	if err := c.ShouldBindUri(&request.URI); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	fmt.Println(request, app.config.Token)
-
-	if request.Token != Token {
-		c.AbortWithStatus(http.StatusForbidden)
-		return
-	}
-
-	mission, err := app.repo.GetMissionById(request.URI.MissionId, nil)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	if mission == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
-		return
-	}
-	// if mission.Status != ds.StatusFormed || *mission.FundingStatus != ds.FundingOnConsideration {
-	// 	c.AbortWithStatus(http.StatusMethodNotAllowed)
-	// 	return
-	// }
-
-	var fundingStatus string
-	if *request.FundingStatus {
-		fundingStatus = ds.FundingApproved
-	} else {
-		fundingStatus = ds.FundingRejected
-	}
-	mission.FundingStatus = &fundingStatus
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
