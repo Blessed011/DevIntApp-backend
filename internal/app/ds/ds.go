@@ -27,15 +27,15 @@ type Module struct {
 }
 
 type Mission struct {
-	UUID          string     `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
-	Name          *string    `gorm:"size:50"`
-	DateCreated   time.Time  `gorm:"not null;type:timestamp"`
-	DateApprove   *time.Time `gorm:"type:timestamp"`
-	DateEnd       *time.Time `gorm:"type:timestamp"`
-	Status        string     `gorm:"size:20;not null"`
-	ModeratorId   *string    `json:"-"`
-	CustomerId    string     `gorm:not null`
-	FundingStatus *string    `gorm:"size:40"`
+	UUID           string     `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
+	Name           *string    `gorm:"size:50"`
+	CreationDate   time.Time  `gorm:"not null;type:timestamp"`
+	FormationDate  *time.Time `gorm:"type:timestamp"`
+	CompletionDate *time.Time `gorm:"type:timestamp"`
+	Status         string     `gorm:"size:20;not null"`
+	ModeratorId    *string    `json:"-"`
+	CustomerId     string     `gorm:not null`
+	FundingStatus  *string    `gorm:"size:40"`
 
 	Moderator *User
 	Customer  User

@@ -35,13 +35,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "начальная дата формирования",
-                        "name": "date_approve_start",
+                        "name": "formation_date_start",
                         "in": "query"
                     },
                     {
                         "type": "string",
                         "description": "конечная дата формирвания",
-                        "name": "date_approve_end",
+                        "name": "formation_completion_date",
                         "in": "query"
                     }
                 ],
@@ -591,16 +591,16 @@ const docTemplate = `{
         "schemes.MissionOutput": {
             "type": "object",
             "properties": {
+                "completion_date": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "string"
+                },
                 "customer": {
                     "type": "string"
                 },
-                "date_approve": {
-                    "type": "string"
-                },
-                "date_created": {
-                    "type": "string"
-                },
-                "date_end": {
+                "formation_date": {
                     "type": "string"
                 },
                 "moderator": {

@@ -34,9 +34,9 @@ type AddToMissionRequest struct {
 }
 
 type GetAllMissionsRequest struct {
-	DateApproveStart *time.Time `form:"date_approve_start" json:"date_approve_start" time_format:"2006-01-02 15:04"`
-	DateApproveEnd   *time.Time `form:"date_approve_end" json:"date_approve_end" time_format:"2006-01-02 15:04"`
-	Status           string     `form:"status" json:"status"`
+	FormationDateStart *time.Time `form:"formation_date_start" json:"formation_date_start" time_format:"2006-01-02 15:04"`
+	FormationDateEnd   *time.Time `form:"formation_date_end" json:"formation_date_end" time_format:"2006-01-02 15:04"`
+	Status             string     `form:"status" json:"status"`
 }
 
 type MissionRequest struct {

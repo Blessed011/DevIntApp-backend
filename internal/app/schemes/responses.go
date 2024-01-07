@@ -28,33 +28,33 @@ type UpdateMissionResponse struct {
 }
 
 type MissionOutput struct {
-	UUID        string  `json:"uuid"`
-	Name        *string `json:"name"`
-	Status      string  `json:"status"`
-	DateCreated string  `json:"date_created"`
-	DateApprove *string `json:"date_approve"`
-	DateEnd     *string `json:"date_end"`
-	Moderator   *string `json:"moderator"`
-	Customer    string  `json:"customer"`
+	UUID           string  `json:"uuid"`
+	Name           *string `json:"name"`
+	Status         string  `json:"status"`
+	CreationDate   string  `json:"creation_date"`
+	FormationDate  *string `json:"formation_date"`
+	CompletionDate *string `json:"completion_date"`
+	Moderator      *string `json:"moderator"`
+	Customer       string  `json:"customer"`
 }
 
 func ConvertMission(mission *ds.Mission) MissionOutput {
 	output := MissionOutput{
-		UUID:        mission.UUID,
-		Name:        mission.Name,
-		Status:      mission.Status,
-		DateCreated: mission.DateCreated.Format("2006-01-02T15:04:05Z07:00"),
-		Customer:    mission.Customer.Login,
+		UUID:         mission.UUID,
+		Name:         mission.Name,
+		Status:       mission.Status,
+		CreationDate: mission.CreationDate.Format("2006-01-02T15:04:05Z07:00"),
+		Customer:     mission.Customer.Login,
 	}
 
-	if mission.DateApprove != nil {
-		dateApprove := mission.DateApprove.Format("2006-01-02T15:04:05Z07:00")
-		output.DateApprove = &dateApprove
+	if mission.FormationDate != nil {
+		formationDate := mission.FormationDate.Format("2006-01-02T15:04:05Z07:00")
+		output.FormationDate = &formationDate
 	}
 
-	if mission.DateEnd != nil {
-		dateEnd := mission.DateEnd.Format("2006-01-02T15:04:05Z07:00")
-		output.DateEnd = &dateEnd
+	if mission.CompletionDate != nil {
+		completionDate := mission.CompletionDate.Format("2006-01-02T15:04:05Z07:00")
+		output.CompletionDate = &completionDate
 	}
 
 	if mission.Moderator != nil {

@@ -64,13 +64,13 @@ definitions:
     type: object
   schemes.MissionOutput:
     properties:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
       customer:
         type: string
-      date_approve:
-        type: string
-      date_created:
-        type: string
-      date_end:
+      formation_date:
         type: string
       moderator:
         type: string
@@ -126,11 +126,11 @@ paths:
         type: string
       - description: начальная дата формирования
         in: query
-        name: date_approve_start
+        name: formation_date_start
         type: string
       - description: конечная дата формирвания
         in: query
-        name: date_approve_end
+        name: formation_completion_date
         type: string
       produces:
       - application/json

@@ -16,8 +16,8 @@ import (
 // @Description	Возвращает все миссии с фильтрацией по статусу и дате формирования
 // @Produce		json
 // @Param		status query string false "статус перевозки"
-// @Param		date_approve_start query string false "начальная дата формирования"
-// @Param		date_approve_end query string false "конечная дата формирвания"
+// @Param		formation_date_start query string false "начальная дата формирования"
+// @Param		formation_completion_date query string false "конечная дата формирвания"
 // @Success		200 {object} schemes.AllMissionsResponse
 // @Router		/api/missions [get]
 func (app *Application) GetAllMissions(c *gin.Context) {
@@ -33,9 +33,9 @@ func (app *Application) GetAllMissions(c *gin.Context) {
 	fmt.Println(userId, userRole)
 	var missions []ds.Mission
 	if userRole == role.Customer {
-		missions, err = app.repo.GetAllMissions(&userId, request.DateApproveStart, request.DateApproveEnd, request.Status)
+		missions, err = app.repo.GetAllMissions(&userId, request.FormationDateStart, request.FormationDateEnd, request.Status)
 	} else {
-		missions, err = app.repo.GetAllMissions(nil, request.DateApproveStart, request.DateApproveEnd, request.Status)
+		missions, err = app.repo.GetAllMissions(nil, request.FormationDateStart, request.FormationDateEnd, request.Status)
 	}
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
@@ -221,7 +221,7 @@ func (app *Application) UserConfirm(c *gin.Context) {
 
 	mission.Status = ds.StatusFormed
 	now := time.Now()
-	mission.DateApprove = &now
+	mission.FormationDate = &now
 
 	if err := app.repo.SaveMission(mission); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -266,7 +266,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	if *request.Confirm {
 		mission.Status = ds.StatusCompleted
 		now := time.Now()
-		mission.DateEnd = &now
+		mission.CompletionDate = &now
 	} else {
 		mission.Status = ds.StatusRejected
 	}

@@ -10,7 +10,7 @@ import (
 	"lab1/internal/app/ds"
 )
 
-func (r *Repository) GetAllMissions(customerId *string, dateApproveStart, dateApproveEnd *time.Time, status string) ([]ds.Mission, error) {
+func (r *Repository) GetAllMissions(customerId *string, formationDateStart, formationCompletionDate *time.Time, status string) ([]ds.Mission, error) {
 	var missions []ds.Mission
 
 	query := r.db.Preload("Customer").Preload("Moderator").
@@ -20,12 +20,12 @@ func (r *Repository) GetAllMissions(customerId *string, dateApproveStart, dateAp
 	if customerId != nil {
 		query = query.Where("customer_id = ?", *customerId)
 	}
-	if dateApproveStart != nil && dateApproveEnd != nil {
-		query = query.Where("date_approve BETWEEN ? AND ?", *dateApproveStart, *dateApproveEnd)
-	} else if dateApproveStart != nil {
-		query = query.Where("date_approve >= ?", *dateApproveStart)
-	} else if dateApproveEnd != nil {
-		query = query.Where("date_approve <= ?", *dateApproveEnd)
+	if formationDateStart != nil && formationCompletionDate != nil {
+		query = query.Where("formation_date BETWEEN ? AND ?", *formationDateStart, *formationCompletionDate)
+	} else if formationDateStart != nil {
+		query = query.Where("formation_date >= ?", *formationDateStart)
+	} else if formationCompletionDate != nil {
+		query = query.Where("formation_date <= ?", *formationCompletionDate)
 	}
 
 	if err := query.Find(&missions).Error; err != nil {
@@ -47,7 +47,7 @@ func (r *Repository) GetDraftMission(customerId string) (*ds.Mission, error) {
 }
 
 func (r *Repository) CreateDraftMission(customerId string) (*ds.Mission, error) {
-	mission := &ds.Mission{DateCreated: time.Now(), CustomerId: customerId, Status: ds.StatusDraft}
+	mission := &ds.Mission{CreationDate: time.Now(), CustomerId: customerId, Status: ds.StatusDraft}
 	err := r.db.Create(mission).Error
 	if err != nil {
 		return nil, err
