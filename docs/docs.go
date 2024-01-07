@@ -367,7 +367,11 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             },
             "delete": {
                 "description": "Удаляет модуль по id",
@@ -603,6 +607,9 @@ const docTemplate = `{
                 "formation_date": {
                     "type": "string"
                 },
+                "funding_status": {
+                    "type": "string"
+                },
                 "moderator": {
                     "type": "string"
                 },
@@ -620,7 +627,7 @@ const docTemplate = `{
         "schemes.MissionResponse": {
             "type": "object",
             "properties": {
-                "missions": {
+                "mission": {
                     "$ref": "#/definitions/schemes.MissionOutput"
                 },
                 "modules": {
