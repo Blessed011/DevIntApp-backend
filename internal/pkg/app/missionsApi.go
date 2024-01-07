@@ -104,7 +104,7 @@ type SwaggerUpdateMissionRequest struct {
 func (app *Application) UpdateMission(c *gin.Context) {
 	var request schemes.UpdateMissionRequest
 	var err error
-	if err := c.ShouldBindUri(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

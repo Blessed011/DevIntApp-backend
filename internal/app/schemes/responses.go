@@ -19,23 +19,23 @@ type AllMissionsResponse struct {
 }
 
 type MissionResponse struct {
-	Mission MissionOutput `json:"missions"`
+	Mission MissionOutput `json:"mission"`
 	Modules []ds.Module   `json:"modules"`
 }
 
 type UpdateMissionResponse struct {
-	Mission MissionOutput `json:"missions"`
+	Mission MissionOutput `json:"mission"`
 }
 
 type MissionOutput struct {
 	UUID           string  `json:"uuid"`
-	Name           *string `json:"name"`
 	Status         string  `json:"status"`
 	CreationDate   string  `json:"creation_date"`
 	FormationDate  *string `json:"formation_date"`
 	CompletionDate *string `json:"completion_date"`
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
+	Name           *string `json:"name"`
 }
 
 func ConvertMission(mission *ds.Mission) MissionOutput {
