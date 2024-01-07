@@ -314,10 +314,6 @@ func (app *Application) Funding(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("миссия не найдена"))
 		return
 	}
-	// if mission.Status != ds.StatusFormed || *mission.FundingStatus != ds.FundingOnConsideration {
-	// 	c.AbortWithStatus(http.StatusMethodNotAllowed)
-	// 	return
-	// }
 
 	var fundingStatus string
 	if *request.FundingStatus {

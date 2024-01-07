@@ -36,15 +36,17 @@ type MissionOutput struct {
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
 	Name           *string `json:"name"`
+	FundingStatus  *string `json:"funding_status"`
 }
 
 func ConvertMission(mission *ds.Mission) MissionOutput {
 	output := MissionOutput{
-		UUID:         mission.UUID,
-		Name:         mission.Name,
-		Status:       mission.Status,
-		CreationDate: mission.CreationDate.Format("2006-01-02T15:04:05Z07:00"),
-		Customer:     mission.Customer.Login,
+		UUID:          mission.UUID,
+		Name:          mission.Name,
+		Status:        mission.Status,
+		CreationDate:  mission.CreationDate.Format("2006-01-02T15:04:05Z07:00"),
+		FundingStatus: mission.FundingStatus,
+		Customer:      mission.Customer.Login,
 	}
 
 	if mission.FormationDate != nil {
