@@ -17,7 +17,7 @@ const FundingOnConsideration string = "финансирование на рас�
 
 type Module struct {
 	UUID        string  `gorm:"type:uuid;primary_key;default:gen_random_uuid()"  json:"uuid" binding:"-"`
-	Name        string  `gorm:"size:50;not null" json:"name"`
+	Name        string  `gorm:"size:50;not null" form:"name" json:"name"`
 	IsDeleted   bool    `gorm:"not null;default:false" json:"-" binding:"-"`
 	ImageURL    *string `gorm:"size:100" json:"image_url" binding:"-"`
 	Description string  `gorm:"size:100" form:"description" json:"description" binding:"required"`

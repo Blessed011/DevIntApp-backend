@@ -21,12 +21,12 @@ type AddModuleRequest struct {
 
 type ChangeModuleRequest struct {
 	ModuleId    string                `uri:"id" binding:"required,uuid"`
-	Name        *string               `form:"name" json:"name" binding:"omitempty,max=100"`
-	Description *string               `form:"description" json:"description" binding:"omitempty,max=75"`
-	Mass        *string               `form:"mass" json:"mass"`
+	Name        *string               `form:"name" json:"name" binding:"omitempty,max=75"`
+	Description *string               `form:"description" json:"description" binding:"omitempty,max=100"`
+	Mass        *string               `form:"mass" json:"mass" binding:"omitempty,max=20`
 	Image       *multipart.FileHeader `form:"image" json:"image"`
-	Diameter    *string               `form:"diameter" json:"diameter" binding:"omitempty,max=100"`
-	Length      *string               `form:"length" json:"length" binding:"omitempty,max=100"`
+	Diameter    *string               `form:"diameter" json:"diameter" binding:"omitempty,max=20"`
+	Length      *string               `form:"length" json:"length" binding:"omitempty,max=20"`
 }
 
 type AddToMissionRequest struct {
