@@ -23,4 +23,4 @@
 - [React Native (лаб 7)](https://github.com/Blessed011/DevIntApp-MobileApp/tree/mobile)
 
 # Домашнее задание:
-- [Интерфес модератора](https://github.com/Blessed011/DevIntApp-frontend/tree/moderator)
+- [Интерфейс модератора](https://github.com/Blessed011/DevIntApp-frontend/tree/moderator)
