@@ -5,10 +5,10 @@
 
 
 # Репозиторий фронтенда:
-- https://github.com/Blessed011/DevIntApp-frontend
+https://github.com/Blessed011/DevIntApp-frontend
 
 # Репозиторий мобильного приложения:
-- https://github.com/Blessed011/DevIntApp-MobileApp
+https://github.com/Blessed011/DevIntApp-MobileApp
 
 # Репозиторий асинхронного сервиса:
-- https://github.com/Blessed011/DevIntApp-AsyncService
+https://github.com/Blessed011/DevIntApp-AsyncService
